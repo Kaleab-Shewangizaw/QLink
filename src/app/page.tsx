@@ -1,3 +1,9 @@
+import Navbar from "./comp/navbar";
+
 export default function Home() {
-  return <div>what do I do now?</div>;
+  return (
+    <div>
+      <Navbar />
+    </div>
+  );
 }
