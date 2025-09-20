@@ -1,17 +1,23 @@
-import { LogIn, User } from "lucide-react";
 import Logo from "./Logo";
 import { ModeToggle } from "@/components/modeToggle";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
-  const loggedIn = false;
+  const loggedIn = true;
   return (
     <div className="flex justify-between items-center">
       <Logo />
       <div className="font-bold">Questions</div>
-      <div>
-        <div className="text-black hover:text-blue-700 transition-all duration-200 cursor-pointer p-1 rounded-full bg-gray-200 flex items-center justify-center">
-          {loggedIn ? <User /> : <LogIn />}
-        </div>
+      <div className="flex items-center gap-4">
+        {loggedIn ? (
+          <Avatar>
+            <AvatarImage src="/profilePicture2.png" alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        ) : (
+          <Button>Log In</Button>
+        )}
         <ModeToggle />
       </div>
     </div>
