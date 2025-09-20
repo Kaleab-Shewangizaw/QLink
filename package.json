@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "better-auth": "^1.3.13",
     "framer-motion": "file:../../../../offline-npm-packages/framer-motion-12.23.5.tgz",
     "lucide-react": "file:../../../../offline-npm-packages/lucide-react-0.525.0.tgz",
     "next": "15.3.5",

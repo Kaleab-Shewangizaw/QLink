@@ -1,3 +1,9 @@
+import QuestionComp from "../comp/questionComp";
+
 export default function Home() {
-  return <div></div>;
+  return (
+    <div className="mt-5">
+      <QuestionComp />
+    </div>
+  );
 }
