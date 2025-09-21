@@ -2,6 +2,7 @@ import Logo from "./Logo";
 import { ModeToggle } from "@/components/modeToggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AddNew from "./addNew";
 
 export default function Navbar() {
   const loggedIn = true;
@@ -19,6 +20,7 @@ export default function Navbar() {
           <Button>Log In</Button>
         )}
         <ModeToggle />
+        <AddNew />
       </div>
     </div>
   );
