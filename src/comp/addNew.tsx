@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Check, Copy, PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AddNew() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const link = "https://qlink.ai/your-link";
@@ -60,7 +62,7 @@ export default function AddNew() {
               <div className="grid gap-4">
                 <div className="grid gap-3">
                   <Label htmlFor="name-1">Name*</Label>
-                  <Input required />
+                  <Input required id="name-1" />
                 </div>
                 <div className="flex items-center justify-between w-full max-w-md rounded-md border bg-muted px-3 py-2 font-inter text-sm">
                   <span className="truncate">{link}</span>
@@ -88,7 +90,7 @@ export default function AddNew() {
           </form>
         </Dialog>
 
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+        <DropdownMenuItem onSelect={() => router.push("/new-question")}>
           Question
         </DropdownMenuItem>
       </DropdownMenuContent>
