@@ -39,7 +39,7 @@ export default function NewQuestion() {
               <Textarea
                 maxLength={1500}
                 placeholder="your description..."
-                rows={15}
+                rows={10}
               />
             </div>
           </div>

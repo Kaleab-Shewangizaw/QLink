@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function Top() {
   return (
@@ -22,12 +23,15 @@ function Top() {
           </Link>
         </p>
       </div>
-      <div className="text-sm text-gray-500">date</div>
+      <div className="text-sm text-gray-500">
+        {new Date().toString().slice(0, 15)}
+      </div>
     </div>
   );
 }
 
 function Bottom() {
+  const router = useRouter();
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
 
@@ -62,7 +66,14 @@ function Bottom() {
         </div>
       </div>
       <div>
-        <Button size="sm">Answer/Read</Button>
+        <Button
+          size="sm"
+          onClick={() => {
+            router.push("/question/123");
+          }}
+        >
+          Answer/Read
+        </Button>
       </div>
     </div>
   );
@@ -72,10 +83,7 @@ export default function QuestionComp() {
   return (
     <div className="w-full p-2  shadow-md/10 dark:border rounded-md dark:border-gray-900 ">
       <Top />
-      <div className="p-2">
-        here we go the question goes here here we go the question goes herehere
-        we go the question goes herehere we go the question goes herehere we go
-      </div>
+      <div className="p-2">What is your favorite food or restaurant?</div>
       <Bottom />
     </div>
   );
