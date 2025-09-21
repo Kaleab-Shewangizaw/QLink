@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function Navbar() {
   const loggedIn = true;
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center px-2">
       <Logo />
       <div className="font-bold">Questions</div>
       <div className="flex items-center gap-4">

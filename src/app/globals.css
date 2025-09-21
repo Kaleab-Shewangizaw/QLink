@@ -119,3 +119,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+.removeScrollBar::-webkit-scrollbar {
+  width: 3px;
+  background-color: gray;
+}
+
+.removeScrollBar::-webkit-scrollbar-thumb {
+  background-color: white;
+}
