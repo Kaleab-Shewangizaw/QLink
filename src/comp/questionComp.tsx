@@ -7,6 +7,8 @@ import Link from "next/link";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Reply } from "lucide-react";
+import { BsEye } from "react-icons/bs";
 
 export function Top() {
   return (
@@ -30,7 +32,13 @@ export function Top() {
   );
 }
 
-export function Bottom({ isAnswer }: { isAnswer?: boolean }) {
+export function Bottom({
+  isAnswer,
+  isReading,
+}: {
+  isAnswer?: boolean;
+  isReading?: boolean;
+}) {
   const router = useRouter();
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
@@ -65,15 +73,27 @@ export function Bottom({ isAnswer }: { isAnswer?: boolean }) {
           <span>{dislike ? 1 : 0}</span>
         </div>
       </div>
-      <div>
-        <Button
-          size="sm"
-          onClick={() => {
-            router.push("/question/123");
-          }}
-        >
-          {isAnswer ? "Reply" : "Answer/read"}
-        </Button>
+      <div className="flex items-center gap-4">
+        {!isAnswer && (
+          <div className="text-gray-500 flex items-center gap-1 text-sm">
+            3 <BsEye size={15} />
+          </div>
+        )}
+        {isAnswer ? (
+          <Button variant="outline" size="sm">
+            <Reply />
+          </Button>
+        ) : !isReading ? (
+          <Button
+            size="sm"
+            onClick={() => {
+              router.push("/question/123");
+            }}
+          >
+            Answer/read
+          </Button>
+        ) : //views count goes here
+        null}
       </div>
     </div>
   );

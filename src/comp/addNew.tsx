@@ -37,13 +37,13 @@ export default function AddNew() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="default">
+        <Button variant="outline">
           <PlusIcon size={16} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="bg-background/60 backdrop-blur-md"
+        className="bg-background/60 backdrop-blur-md z-20"
       >
         <Dialog open={open} onOpenChange={setOpen}>
           <form>

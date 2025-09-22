@@ -1,18 +1,22 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function NewQuestion() {
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const router = useRouter();
+
   return (
-    <div className="p-2 py-5 flex flex-col ">
+    <div className="p-2 py-5 flex flex-col">
       <button
         onClick={() => router.back()}
-        className="text-gray-500 mb-5 hover:text-gray-300 cursor-pointer  flex items-center gap-1 w-fit"
+        className="text-gray-500 mb-5 hover:text-gray-300 cursor-pointer flex items-center gap-1 w-fit"
       >
         <ArrowLeft /> Back
       </button>
@@ -43,13 +47,27 @@ export default function NewQuestion() {
               />
             </div>
           </div>
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" type="button">
-              Cancel
-            </Button>
-            <Button variant="outline" type="submit">
-              Submit
-            </Button>
+          <div className="flex items-center justify-between mt-5">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="anonymous"
+                checked={isAnonymous}
+                onCheckedChange={(checked) => setIsAnonymous(checked === true)}
+              />
+              <Label htmlFor="anonymous">Ask Anonymously </Label>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => router.back()}
+              >
+                Cancel
+              </Button>
+              <Button variant="outline" type="submit">
+                Submit
+              </Button>
+            </div>
           </div>
         </form>
       </div>

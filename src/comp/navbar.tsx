@@ -10,7 +10,7 @@ import { useState } from "react";
 import SignUp from "./SignUp";
 
 export default function Navbar() {
-  const loggedIn = false;
+  const loggedIn = true;
   const [signIn, setSignIn] = useState(false);
   return (
     <div className="sticky top-0 left-0 backdrop:blur-2xl backdrop-blur-2xl z-100 flex justify-between items-center p-2">

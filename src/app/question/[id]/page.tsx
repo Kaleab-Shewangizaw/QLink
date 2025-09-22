@@ -13,7 +13,7 @@ export default function QuestionPage() {
   const router = useRouter();
   return (
     <div className="px-2 pb-5 flex flex-col  ">
-      <div className="sticky top-13 z-100 bg-black p-2 left-0 border  border-b-0  text-gray-500 ">
+      <div className="sticky top-13 z-10 bg-white dark:bg-black p-2 left-0 border  border-b-0  text-gray-500 ">
         <button
           onClick={() => router.back()}
           className=" hover:text-gray-300 cursor-pointer  flex items-center gap-1"
@@ -30,7 +30,7 @@ export default function QuestionPage() {
           </h1>
 
           <p
-            className={`text-gray-400 text-sm mt-1 ${
+            className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
               !showMore && "line-clamp-3"
             }`}
           >
@@ -53,7 +53,7 @@ export default function QuestionPage() {
             read {showMore ? "less" : "more"}
           </p>
           <div className="py-2 border-t border-gray-700 mt-5">
-            <Bottom />
+            <Bottom isReading />
           </div>
         </div>
         <div className="rounded-t-none border border-gray-700 rounded-md p-4 ">
