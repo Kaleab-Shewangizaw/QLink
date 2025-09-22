@@ -1,83 +1,28 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AnswerComp from "@/comp/answerComp";
+import { Bottom, Top } from "@/comp/questionComp";
+
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-function Top() {
-  return (
-    <div className="w-full flex justify-between items-center">
-      <div className="flex items-center text-gray-500 gap-2 hover:text-blue-700">
-        <Avatar>
-          <AvatarImage src="/profilePicture2.png" alt="user" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-
-        <p className=" text-sm  flex items-center ">
-          <Link href="" className="">
-            username{" "}
-          </Link>
-        </p>
-      </div>
-      <div className="text-sm text-gray-500">date</div>
-    </div>
-  );
-}
-
-function Bottom() {
-  const [like, setLike] = useState(false);
-  const [dislike, setDislike] = useState(false);
-
-  return (
-    <div className="pt-2 flex items-center justify-between">
-      <div className="flex gap-4 text-gray-500 items-center ">
-        <div
-          className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            like &&
-            "bg-gray-800 text-gray-300 not-dark:bg-gray-200 not-dark:text-gray-700"
-          }`}
-          onClick={() => {
-            setDislike(false);
-            setLike(!like);
-          }}
-        >
-          <span>👍</span>
-          <span>{like ? 1 : 0}</span>
-        </div>
-        <div
-          className={`flex gap-1 cursor-pointer  rounded-md p-1 px-1.5 ${
-            dislike &&
-            "bg-gray-800 text-gray-300 not-dark:bg-gray-200 not-dark:text-gray-700"
-          }`}
-          onClick={() => {
-            setLike(false);
-            setDislike(!dislike);
-          }}
-        >
-          <span>👎</span>
-          <span>{dislike ? 1 : 0}</span>
-        </div>
-      </div>
-      <div></div>
-    </div>
-  );
-}
 
 export default function QuestionPage() {
   const [showMore, setShowMore] = useState(false);
   const router = useRouter();
   return (
-    <div className="p-2 py-5 flex flex-col ">
-      <button
-        onClick={() => router.back()}
-        className="text-gray-500 mb-5 hover:text-gray-300 cursor-pointer  flex items-center gap-1 w-fit"
-      >
-        <ArrowLeft /> Back
-      </button>
+    <div className="px-2 pb-5 flex flex-col  ">
+      <div className="sticky top-13 z-100 bg-black p-2 left-0 border  border-b-0  text-gray-500 ">
+        <button
+          onClick={() => router.back()}
+          className=" hover:text-gray-300 cursor-pointer  flex items-center gap-1"
+        >
+          <ArrowLeft /> Back
+        </button>
+      </div>
       <div>
-        <div className="border border-gray-700 rounded-md p-4 ">
+        <div className="border border-gray-700  p-4 rounded-b-none border-y-0">
           <Top />
           <h1 className="text-lg font-semibold">
             Question TitleQuestion TitleQuestion TitleQuestion TitleQuestion
@@ -111,11 +56,15 @@ export default function QuestionPage() {
             <Bottom />
           </div>
         </div>
-        <div className="mt-5 border border-gray-700 rounded-md p-4 ">
+        <div className="rounded-t-none border border-gray-700 rounded-md p-4 ">
           <h2 className="text-lg font-semibold mb-2">Answers</h2>
-          <p className="text-gray-500">
+          {/* <p className="text-gray-500">
             No answers yet. Be the first to answer!
-          </p>
+          </p> */}
+          <AnswerComp />
+          <AnswerComp />
+          <AnswerComp />
+          <AnswerComp />
         </div>
       </div>
     </div>

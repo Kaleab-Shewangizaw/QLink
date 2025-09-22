@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function Top() {
+export function Top() {
   return (
     <div className="w-full flex justify-between items-center">
       <div className="flex items-center text-gray-500 gap-2 hover:text-blue-700">
@@ -30,7 +30,7 @@ function Top() {
   );
 }
 
-function Bottom() {
+export function Bottom({ isAnswer }: { isAnswer?: boolean }) {
   const router = useRouter();
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
@@ -72,7 +72,7 @@ function Bottom() {
             router.push("/question/123");
           }}
         >
-          Answer/Read
+          {isAnswer ? "Reply" : "Answer/read"}
         </Button>
       </div>
     </div>

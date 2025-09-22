@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="border-x md:w-2xl lg:w-2xl mx-auto pt-2  h-screen border-gray-700 not-dark:border-gray-400">
+        <div className="border-x md:w-2xl lg:w-2xl mx-auto removeScrollBar relative  h-screen overflow-auto border-gray-700 not-dark:border-gray-400">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
