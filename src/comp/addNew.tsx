@@ -43,7 +43,7 @@ export default function AddNew() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="bg-background/60 backdrop-blur-md z-20"
+        className="bg-background/60 backdrop-blur-md z-200"
       >
         <Dialog open={open} onOpenChange={setOpen}>
           <form>

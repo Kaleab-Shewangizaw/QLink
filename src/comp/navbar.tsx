@@ -3,6 +3,14 @@ import Logo from "./Logo";
 import { ModeToggle } from "@/components/modeToggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import AddNew from "./addNew";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import SignIn from "./SignIn";
@@ -12,22 +20,52 @@ import { authClient } from "@/app/lib/auth-client";
 
 export default function Navbar() {
   const { data: session } = authClient.useSession();
-
   const loggedIn = !!session?.user;
   const [signIn, setSignIn] = useState(false);
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    console.log("User logged out");
+  };
+
   return (
     <div className="sticky top-0 left-0 backdrop:blur-2xl backdrop-blur-2xl z-100 flex justify-between items-center p-2">
       <Logo />
       <div className="font-bold">Questions</div>
       <div className="flex items-center gap-4">
         {loggedIn ? (
-          <Avatar>
-            <AvatarImage
-              src={session?.user.image || "/profilePicture2.png"}
-              alt="@shadcn"
-            />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="cursor-pointer">
+                <AvatarImage
+                  src={session?.user.image || "/profilePicture2.png"}
+                  alt={session?.user.name || "User"}
+                />
+                <AvatarFallback>
+                  {session?.user.name?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-background/60 backdrop-blur-md z-200"
+            >
+              <DropdownMenuLabel>
+                {session?.user.name || "My Account"}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => console.log("Settings clicked")}>
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <Dialog>
             <form>
