@@ -17,7 +17,7 @@ import { Loader2, X } from "lucide-react";
 
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/app/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState("");
@@ -151,12 +151,12 @@ export default function SignUp() {
             className="w-full"
             disabled={loading}
             onClick={async () => {
-              await signUp.email({
+              await authClient.signUp.email({
                 email,
                 password,
                 name: `${firstName} ${lastName}`,
                 image: image ? await convertImageToBase64(image) : "",
-                callbackURL: "/dashboard",
+                callbackURL: "/",
                 fetchOptions: {
                   onResponse: () => {
                     setLoading(false);
@@ -168,7 +168,7 @@ export default function SignUp() {
                     toast.error(ctx.error.message);
                   },
                   onSuccess: async () => {
-                    router.push("/dashboard");
+                    router.push("/");
                   },
                 },
               });

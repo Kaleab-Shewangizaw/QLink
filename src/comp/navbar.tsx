@@ -8,9 +8,12 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import SignIn from "./SignIn";
 import { useState } from "react";
 import SignUp from "./SignUp";
+import { authClient } from "@/app/lib/auth-client";
 
 export default function Navbar() {
-  const loggedIn = true;
+  const { data: session } = authClient.useSession();
+
+  const loggedIn = !!session?.user;
   const [signIn, setSignIn] = useState(false);
   return (
     <div className="sticky top-0 left-0 backdrop:blur-2xl backdrop-blur-2xl z-100 flex justify-between items-center p-2">
@@ -19,7 +22,10 @@ export default function Navbar() {
       <div className="flex items-center gap-4">
         {loggedIn ? (
           <Avatar>
-            <AvatarImage src="/profilePicture2.png" alt="@shadcn" />
+            <AvatarImage
+              src={session?.user.image || "/profilePicture2.png"}
+              alt="@shadcn"
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         ) : (
