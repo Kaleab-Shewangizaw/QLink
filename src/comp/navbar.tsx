@@ -14,14 +14,21 @@ import {
 import AddNew from "./addNew";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import SignIn from "./SignIn";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignUp from "./SignUp";
 import { authClient } from "@/app/lib/auth-client";
+import { Link, Loader2, LogOut, Settings } from "lucide-react";
+import { BiComment, BiQuestionMark } from "react-icons/bi";
 
 export default function Navbar() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const loggedIn = !!session?.user;
   const [signIn, setSignIn] = useState(false);
+  useEffect(() => {
+    if (session) {
+      console.log("we have session:", session);
+    }
+  }, [session, isPending]);
 
   const handleLogout = async () => {
     await authClient.signOut();
@@ -33,7 +40,9 @@ export default function Navbar() {
       <Logo />
       <div className="font-bold">Questions</div>
       <div className="flex items-center gap-4">
-        {loggedIn ? (
+        {isPending ? (
+          <Loader2 size={16} className="animate-spin" />
+        ) : loggedIn ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
@@ -42,7 +51,7 @@ export default function Navbar() {
                   alt={session?.user.name || "User"}
                 />
                 <AvatarFallback>
-                  {session?.user.name?.charAt(0) || "U"}
+                  {session?.user.name?.charAt(0) || "QL"}
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
@@ -55,14 +64,21 @@ export default function Navbar() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => console.log("Go to profile")}>
-                Profile
+                <Link /> My Links
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => console.log("Settings clicked")}>
-                Settings
+              <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+                <BiQuestionMark /> My Questions
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+                <BiComment /> My Answers
+              </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => console.log("Settings clicked")}>
+                <Settings /> Settings
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="text-red-500">
-                Logout
+                <LogOut /> Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -2,6 +2,7 @@
 
 import AnswerComp from "@/comp/answerComp";
 import { Bottom, Top } from "@/comp/questionComp";
+import { Button } from "@/components/ui/button";
 
 import { ArrowLeft } from "lucide-react";
 
@@ -13,13 +14,14 @@ export default function QuestionPage() {
   const router = useRouter();
   return (
     <div className="px-2 pb-5 flex flex-col  ">
-      <div className="sticky top-13 z-10 bg-white dark:bg-black p-2 left-0 border  border-b-0  text-gray-500 ">
+      <div className="sticky top-13 z-10 bg-white dark:bg-black p-2 left-0 border  border-b-0  text-gray-500 flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className=" hover:text-gray-300 cursor-pointer  flex items-center gap-1"
         >
           <ArrowLeft /> Back
         </button>
+        <Button size="sm">Answer</Button>
       </div>
       <div>
         <div className="border border-gray-700  p-4 rounded-b-none border-y-0">
@@ -56,7 +58,7 @@ export default function QuestionPage() {
             <Bottom isReading />
           </div>
         </div>
-        <div className="rounded-t-none border border-gray-700 rounded-md p-4 ">
+        <div className="rounded-t-none border border-gray-700 rounded-md p-3 ">
           <h2 className="text-lg font-semibold mb-2">Answers</h2>
           {/* <p className="text-gray-500">
             No answers yet. Be the first to answer!

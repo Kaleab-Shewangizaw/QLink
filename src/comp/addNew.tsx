@@ -19,9 +19,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Check, Copy, PlusIcon } from "lucide-react";
+import { Check, Copy, Link, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BiQuestionMark } from "react-icons/bi";
 
 export default function AddNew() {
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function AddNew() {
           <form>
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Link
+                <Link /> Link
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -91,7 +92,7 @@ export default function AddNew() {
         </Dialog>
 
         <DropdownMenuItem onSelect={() => router.push("/new-question")}>
-          Question
+          <BiQuestionMark /> Question
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

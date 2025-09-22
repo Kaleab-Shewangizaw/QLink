@@ -75,14 +75,24 @@ export function Bottom({
       </div>
       <div className="flex items-center gap-4">
         {!isAnswer && (
-          <div className="text-gray-500 flex items-center gap-1 text-sm">
-            3 <BsEye size={15} />
-          </div>
+          <>
+            <div className="text-gray-500 flex items-start gap-1 text-sm">
+              3 <BsEye size={15} />
+            </div>
+            <div className="text-gray-500 flex items-start gap-1 text-sm">
+              3 <Reply size={15} />
+            </div>
+          </>
         )}
         {isAnswer ? (
-          <Button variant="outline" size="sm">
-            <Reply />
-          </Button>
+          <>
+            <div className="text-gray-500 flex items-start gap-1 text-sm">
+              3 <Reply size={15} />
+            </div>
+            <Button variant="outline" size="sm">
+              <Reply />
+            </Button>
+          </>
         ) : !isReading ? (
           <Button
             size="sm"
