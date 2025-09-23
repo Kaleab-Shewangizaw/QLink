@@ -10,6 +10,17 @@ import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
 import { BsEye } from "react-icons/bs";
 import { BiComment, BiDownArrow, BiUpArrow } from "react-icons/bi";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export function Top() {
   return (
@@ -43,6 +54,7 @@ export function Bottom({
   const router = useRouter();
   const [isLiked, setIsLiked] = useState("");
   const [count, setCount] = useState(0);
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <div className="pt-2 flex items-center justify-between">
@@ -50,7 +62,7 @@ export function Bottom({
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
             isLiked === "T" &&
-            "bg-gray-800 text-gray-300 not-dark:bg-gray-200 not-dark:text-gray-700"
+            "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
           }`}
           onClick={() => {
             if (isLiked === "F") {
@@ -70,7 +82,7 @@ export function Bottom({
         <div
           className={`cursor-pointer rounded-md p-1 px-1.5 ml-2 ${
             isLiked == "F" &&
-            "bg-gray-800 text-gray-300 not-dark:bg-gray-200 not-dark:text-gray-700"
+            "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
           }`}
           onClick={() => {
             if (isLiked === "F") {
@@ -105,9 +117,66 @@ export function Bottom({
             <div className="text-gray-500 flex items-start gap-1 text-sm">
               3 <Reply size={15} />
             </div>
-            <Button variant="outline" size="sm">
-              <Reply />
-            </Button>
+
+            <Dialog>
+              <form action="">
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Reply />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[525px]">
+                  <DialogHeader>
+                    <DialogTitle>
+                      <h1 className="text-sm  text-gray-400 font-normal ">
+                        reply to{" "}
+                        <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
+                          username
+                        </span>
+                        &apos;s answer in{" "}
+                        <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
+                          username
+                        </span>
+                        &apos;s question
+                      </h1>
+                    </DialogTitle>
+                    <DialogDescription>
+                      <p
+                        className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
+                          !showMore && "line-clamp-3"
+                        }`}
+                      >
+                        Lorem ipsum, dolor sit amet consectetur adipisicing
+                        elit. Tempore, beatae praesentium harum eius quis quae
+                        culpa fugiat commodi! Soluta, eius!
+                      </p>
+                      <p
+                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline  cursor-pointer"
+                        onClick={() => setShowMore(!showMore)}
+                      >
+                        Show more
+                      </p>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4">
+                    <div className="grid gap-3">
+                      <Textarea
+                        id="name-1"
+                        name="name"
+                        className="w-full"
+                        rows={10}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit">Answer</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </form>
+            </Dialog>
           </>
         ) : !isReading ? (
           <Button

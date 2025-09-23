@@ -42,14 +42,14 @@ export default function QuestionPage() {
                 <DialogTitle>
                   <h1 className="text-sm  text-gray-400 font-normal ">
                     Answer to{" "}
-                    <span className="font-semibold text-gray-200 cursor-pointer hover:underline">
+                    <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
                       username
                     </span>
                     &apos;s question
                   </h1>
                 </DialogTitle>
                 <DialogDescription>
-                  <h1 className="text-lg font-semibold line-clamp-3 text-gray-300">
+                  <h1 className="text-lg font-semibold line-clamp-3 text-gray-500">
                     Question TitleQuestion TitleQuestion TitleQuestion
                     TitleQuestion TitleQuestion Title
                   </h1>

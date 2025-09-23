@@ -22,6 +22,7 @@
     "framer-motion": "file:../../../../offline-npm-packages/framer-motion-12.23.5.tgz",
     "lucide-react": "file:../../../../offline-npm-packages/lucide-react-0.525.0.tgz",
     "mongodb": "^6.20.0",
+    "mongoose": "^8.18.2",
     "next": "15.3.5",
     "next-themes": "^0.4.6",
     "postcss": "^8.5.6",
