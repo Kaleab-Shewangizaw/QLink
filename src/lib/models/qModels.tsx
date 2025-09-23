@@ -26,7 +26,7 @@ export interface IQuestion extends Document {
   updatedAt: Date;
 }
 
-const ProjectSchema: Schema = new Schema(
+const QuestionSchema: Schema = new Schema(
   {
     title: {
       type: String,
@@ -113,6 +113,6 @@ const ProjectSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export const Project: Model<IQuestion> =
-  mongoose.models.Project ||
-  mongoose.model<IQuestion>("Project", ProjectSchema);
+export const Question: Model<IQuestion> =
+  mongoose.models.Question ||
+  mongoose.model<IQuestion>("Question", QuestionSchema);

@@ -32,6 +32,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^13.0.0",
     "vaul": "^1.1.2",
     "zod": "file:../../../../offline-npm-packages/zod-4.0.5.tgz"
   },

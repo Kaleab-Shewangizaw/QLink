@@ -10,7 +10,36 @@ import { useState } from "react";
 
 export default function NewQuestion() {
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("/api/question/add-question", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          isAnonymous,
+        }),
+      });
+
+      if (res.ok) {
+        router.push("/");
+      } else {
+        console.error("Failed to submit question");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
 
   return (
     <div className="p-2 py-5 flex flex-col">
@@ -21,7 +50,7 @@ export default function NewQuestion() {
         <ArrowLeft /> Back
       </button>
       <div className="border border-gray-700 rounded-md p-4 text-center">
-        <form action="">
+        <form onSubmit={handleSubmit}>
           <h1 className="text-lg font-semibold">New Question</h1>
           <div className="grid gap-4 py-5">
             <div className="grid gap-2">
@@ -31,7 +60,13 @@ export default function NewQuestion() {
                   250 characters
                 </span>
               </Label>
-              <Textarea maxLength={250} required rows={3} />
+              <Textarea
+                maxLength={250}
+                required
+                rows={3}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
             <div className="grid gap-2">
               <Label className="mt-4">
@@ -44,6 +79,8 @@ export default function NewQuestion() {
                 maxLength={1500}
                 placeholder="your description..."
                 rows={10}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
           </div>

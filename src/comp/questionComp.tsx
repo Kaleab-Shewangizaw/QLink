@@ -194,11 +194,11 @@ export function Bottom({
   );
 }
 
-export default function QuestionComp() {
+export default function QuestionComp({ question }: { question?: any }) {
   return (
     <div className="w-full p-2  shadow-md/10 dark:border rounded-md dark:border-gray-900 ">
       <Top />
-      <div className="p-2">What is your favorite food or restaurant?</div>
+      <div className="p-2">{question?.title}</div>
       <Bottom />
     </div>
   );
