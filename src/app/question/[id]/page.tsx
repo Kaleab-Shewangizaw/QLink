@@ -2,6 +2,7 @@
 
 import AnswerComp from "@/comp/answerComp";
 import { Bottom, Top } from "@/comp/questionComp";
+import { QuestionPageSkeleton } from "@/comp/questionPageSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -127,7 +128,7 @@ export default function QuestionPage() {
           </div>
         </div>
       ) : (
-        <p className="text-gray-500">Loading question...</p>
+        <QuestionPageSkeleton />
       )}
     </div>
   );
