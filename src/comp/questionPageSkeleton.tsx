@@ -7,8 +7,8 @@ export function QuestionPageSkeleton() {
     <div className="px-2 pb-5 flex flex-col">
       {/* Header */}
       <div className="sticky top-13 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0 border border-gray-700 border-b-0 flex items-center justify-between">
-        <Skeleton className="h-6 w-20" /> {/* Back button */}
-        <Skeleton className="h-8 w-24" /> {/* Answer button */}
+        <Skeleton className="h-6 w-20" /> 
+        <Skeleton className="h-8 w-24" /> 
       </div>
 
       {/* Question Card */}

@@ -1,60 +1,21 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+import { Answer } from "./qModels";
 
-export interface Answer {
-  text: string;
-  respondent: string;
-  likes: number;
-  isReply: boolean;
-  replies?: Answer[];
-  questionId: string;
-  repliedTo?: string;
-
+interface ILink extends Document {
+  name: string;
+  owner: string;
+  questions: Answer[];
+  questionNumber: number;
+  isOpen: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface IQuestion extends Document {
-  id: string;
-  title: string;
-  isAnonymous: boolean;
-  description?: string;
-  asker: string;
-  likes: number;
-  answers?: Answer[];
-  views: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const QuestionSchema: Schema = new Schema(
+const linkSchema: Schema = new Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-    views: {
-      type: Number,
-      default: 0,
-    },
-    description: {
-      type: String,
-    },
-    isAnonymous: {
-      type: Boolean,
-      default: false,
-    },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-
-    asker: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
-    answers: [
+    name: { type: String, required: true },
+    owner: { type: String, required: true },
+    questions: [
       {
         id: {
           type: mongoose.Schema.Types.ObjectId,
@@ -109,10 +70,12 @@ const QuestionSchema: Schema = new Schema(
         },
       },
     ],
+
+    questionNumber: { type: Number, default: 0 },
+    isOpen: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-export const Question: Model<IQuestion> =
-  mongoose.models.Question ||
-  mongoose.model<IQuestion>("Question", QuestionSchema);
+export const Link: Model<ILink> =
+  mongoose.models.Link || mongoose.model<ILink>("Link", linkSchema);
