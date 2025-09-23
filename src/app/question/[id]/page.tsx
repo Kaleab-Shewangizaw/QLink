@@ -64,7 +64,7 @@ export default function QuestionPage() {
             No answers yet. Be the first to answer!
           </p> */}
           <AnswerComp />
-          <AnswerComp />
+          <AnswerComp isReply />
           <AnswerComp />
           <AnswerComp />
         </div>
