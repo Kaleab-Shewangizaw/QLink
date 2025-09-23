@@ -12,12 +12,13 @@ export default function NewQuestion() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const res = await fetch("/api/question/add-question", {
         method: "POST",
@@ -33,11 +34,14 @@ export default function NewQuestion() {
 
       if (res.ok) {
         router.push("/");
+        setLoading(false);
       } else {
         console.error("Failed to submit question");
+        setLoading(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
+      setLoading(false);
     }
   };
 
@@ -101,8 +105,8 @@ export default function NewQuestion() {
               >
                 Cancel
               </Button>
-              <Button variant="outline" type="submit">
-                Submit
+              <Button variant="outline" type="submit" disabled={loading}>
+                {loading ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </div>

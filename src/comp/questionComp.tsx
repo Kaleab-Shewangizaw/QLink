@@ -47,9 +47,11 @@ export function Top() {
 export function Bottom({
   isAnswer,
   isReading,
+  question,
 }: {
   isAnswer?: boolean;
   isReading?: boolean;
+  question?: any;
 }) {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState("");
@@ -183,7 +185,7 @@ export function Bottom({
             variant="outline"
             size="sm"
             onClick={() => {
-              router.push("/question/123");
+              router.push(`/question/${question?._id}`);
             }}
           >
             Answer/read
@@ -199,7 +201,7 @@ export default function QuestionComp({ question }: { question?: any }) {
     <div className="w-full p-2  shadow-md/10 dark:border rounded-md dark:border-gray-900 ">
       <Top />
       <div className="p-2">{question?.title}</div>
-      <Bottom />
+      <Bottom question={question} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Question } from "@/lib/models/qModels";
 import dbConnect from "@/lib/mongodb";
 
-export async function GET(req: Request, res: Response) {
+export async function GET() {
   try {
     await dbConnect();
     const questions = await Question.find().sort({ createdAt: -1 });
