@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
 import { BsEye } from "react-icons/bs";
+import { BiComment, BiDownArrow, BiUpArrow } from "react-icons/bi";
 
 export function Top() {
   return (
@@ -40,38 +41,53 @@ export function Bottom({
   isReading?: boolean;
 }) {
   const router = useRouter();
-  const [like, setLike] = useState(false);
-  const [dislike, setDislike] = useState(false);
+  const [isLiked, setIsLiked] = useState("");
+  const [count, setCount] = useState(0);
 
   return (
     <div className="pt-2 flex items-center justify-between">
-      <div className="flex gap-4 text-gray-500 items-center ">
+      <div className="flex  text-gray-500 items-center ">
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            like &&
+            isLiked === "T" &&
             "bg-gray-800 text-gray-300 not-dark:bg-gray-200 not-dark:text-gray-700"
           }`}
           onClick={() => {
-            setDislike(false);
-            setLike(!like);
+            if (isLiked === "F") {
+              setIsLiked("T");
+              setCount(count + 2);
+            } else if (isLiked === "T") {
+              setIsLiked("");
+              setCount(count - 1);
+            } else {
+              setIsLiked("T");
+              setCount(count + 1);
+            }
           }}
         >
-          <span>👍</span>
-          <span>{like ? 1 : 0}</span>
+          <BiUpArrow />
         </div>
         <div
-          className={`flex gap-1 cursor-pointer  rounded-md p-1 px-1.5 ${
-            dislike &&
+          className={`cursor-pointer rounded-md p-1 px-1.5 ml-2 ${
+            isLiked == "F" &&
             "bg-gray-800 text-gray-300 not-dark:bg-gray-200 not-dark:text-gray-700"
           }`}
           onClick={() => {
-            setLike(false);
-            setDislike(!dislike);
+            if (isLiked === "F") {
+              setIsLiked("");
+              setCount(count + 1);
+            } else if (isLiked === "T") {
+              setIsLiked("F");
+              setCount(count - 2);
+            } else {
+              setIsLiked("F");
+              setCount(count - 1);
+            }
           }}
         >
-          <span>👎</span>
-          <span>{dislike ? 1 : 0}</span>
+          <BiDownArrow />
         </div>
+        <span className="text-sm ml-3">{count}</span>
       </div>
       <div className="flex items-center gap-4">
         {!isAnswer && (
@@ -80,7 +96,7 @@ export function Bottom({
               3 <BsEye size={15} />
             </div>
             <div className="text-gray-500 flex items-start gap-1 text-sm">
-              3 <Reply size={15} />
+              3 <BiComment size={15} />
             </div>
           </>
         )}
@@ -95,6 +111,7 @@ export function Bottom({
           </>
         ) : !isReading ? (
           <Button
+            variant="outline"
             size="sm"
             onClick={() => {
               router.push("/question/123");
@@ -102,8 +119,7 @@ export function Bottom({
           >
             Answer/read
           </Button>
-        ) : //views count goes here
-        null}
+        ) : null}
       </div>
     </div>
   );
