@@ -19,8 +19,10 @@ import SignUp from "./SignUp";
 import { authClient } from "@/app/lib/auth-client";
 import { Link, Loader2, LogOut, Settings } from "lucide-react";
 import { BiComment, BiQuestionMark } from "react-icons/bi";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const loggedIn = !!session?.user;
   const [signIn, setSignIn] = useState(false);
@@ -38,7 +40,7 @@ export default function Navbar() {
   return (
     <div className="sticky top-0 left-0 backdrop:blur-2xl backdrop-blur-2xl z-100 flex justify-between items-center p-2">
       <Logo />
-      <div className="font-bold">Questions</div>
+
       <div className="flex items-center gap-4">
         {isPending ? (
           <Loader2 size={16} className="animate-spin" />
@@ -63,13 +65,13 @@ export default function Navbar() {
                 {session?.user.name || "My Account"}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+              <DropdownMenuItem onClick={() => router.push("/links")}>
                 <Link /> My Links
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+              <DropdownMenuItem onClick={() => router.push("/questions")}>
                 <BiQuestionMark /> My Questions
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+              <DropdownMenuItem onClick={() => router.push("/answers")}>
                 <BiComment /> My Answers
               </DropdownMenuItem>
 

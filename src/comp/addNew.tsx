@@ -28,11 +28,45 @@ export default function AddNew() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const link = "https://qlink.ai/your-link";
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [link, setLink] = useState("Link will be generated here");
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      fetch("/api/link/add-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+        }),
+      }).then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            setLink(
+              `${window.location.origin}/link/${data.link._id}/${data.link.name}`
+            );
+            setLoading(false);
+          });
+        } else {
+          res.json().then((data) => {
+            alert(data.message);
+            setLoading(false);
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Error adding link:", error);
+    }
   };
 
   return (
@@ -47,7 +81,7 @@ export default function AddNew() {
         className="bg-background/60 backdrop-blur-md z-200"
       >
         <Dialog open={open} onOpenChange={setOpen}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <Link /> Link
@@ -63,7 +97,12 @@ export default function AddNew() {
               <div className="grid gap-4">
                 <div className="grid gap-3">
                   <Label htmlFor="name-1">Name*</Label>
-                  <Input required id="name-1" />
+                  <Input
+                    required
+                    id="name-1"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
                 <div className="flex items-center justify-between w-full max-w-md rounded-md border bg-muted px-3 py-2 font-inter text-sm">
                   <span className="truncate">{link}</span>
@@ -85,7 +124,9 @@ export default function AddNew() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Save changes</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Creating..." : "Create Link"}
+                </Button>
               </DialogFooter>
             </DialogContent>
           </form>

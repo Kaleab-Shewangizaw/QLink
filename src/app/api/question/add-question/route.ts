@@ -3,14 +3,12 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import { auth } from "@/app/lib/auth";
-import { IQuestion, Question } from "@/lib/models/qModels";
+import { Question } from "@/lib/models/qModels";
 
 interface AddQuestionRequest {
   title: string;
   description?: string;
   isAnonymous: boolean;
-
-  teamId?: string;
 }
 
 export async function POST(req: Request) {
@@ -38,8 +36,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // Create new question
-    const newQuestion: IQuestion = {
+    const newQuestion = {
       id: uuidv4(),
       title: title.trim(),
       description: description?.toString() || "",
