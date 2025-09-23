@@ -14,7 +14,7 @@ import { BiComment, BiDownArrow, BiUpArrow } from "react-icons/bi";
 export function Top() {
   return (
     <div className="w-full flex justify-between items-center">
-      <div className="flex items-center text-gray-500 gap-2 hover:text-blue-700">
+      <div className="flex items-center text-gray-500 gap-2 hover:text-gray-200 cursor-pointer">
         <Avatar>
           <AvatarImage src="/profilePicture2.png" alt="user" />
           <AvatarFallback>CN</AvatarFallback>

@@ -3,6 +3,17 @@
 import AnswerComp from "@/comp/answerComp";
 import { Bottom, Top } from "@/comp/questionComp";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 import { ArrowLeft } from "lucide-react";
 
@@ -14,14 +25,55 @@ export default function QuestionPage() {
   const router = useRouter();
   return (
     <div className="px-2 pb-5 flex flex-col  ">
-      <div className="sticky top-13 z-10 bg-white dark:bg-black p-2 left-0 border  border-b-0  text-gray-500 flex items-center justify-between">
+      <div className="sticky top-13 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0 border border-gray-700   border-b-0  text-gray-500 flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className=" hover:text-gray-300 cursor-pointer  flex items-center gap-1"
         >
           <ArrowLeft /> Back
         </button>
-        <Button size="sm">Answer</Button>
+        <Dialog>
+          <form action="">
+            <DialogTrigger asChild>
+              <Button variant="outline">Answer</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+              <DialogHeader>
+                <DialogTitle>
+                  <h1 className="text-sm  text-gray-400 font-normal ">
+                    Answer to{" "}
+                    <span className="font-semibold text-gray-200 cursor-pointer hover:underline">
+                      username
+                    </span>
+                    &apos;s question
+                  </h1>
+                </DialogTitle>
+                <DialogDescription>
+                  <h1 className="text-lg font-semibold line-clamp-3 text-gray-300">
+                    Question TitleQuestion TitleQuestion TitleQuestion
+                    TitleQuestion TitleQuestion Title
+                  </h1>
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <Textarea
+                    id="name-1"
+                    name="name"
+                    className="w-full"
+                    rows={10}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Answer</Button>
+              </DialogFooter>
+            </DialogContent>
+          </form>
+        </Dialog>
       </div>
       <div>
         <div className="border border-gray-700  p-4 rounded-b-none border-y-0">

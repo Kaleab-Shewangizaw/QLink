@@ -1,6 +1,6 @@
 import { Bottom, Top } from "./questionComp";
 
-export default function AnswerComp({ isReply }: { isReply: boolean }) {
+export default function AnswerComp({ isReply }: { isReply?: boolean }) {
   return (
     <div
       className={`w-full  mt-4 shadow-md/10 dark:border rounded-md dark:border-gray-900 relative ${
@@ -15,6 +15,7 @@ export default function AnswerComp({ isReply }: { isReply: boolean }) {
           </div>
         </div>
       )}
+      {!isReply && <></>}
       <Top />
       <div className="mt-2 dark:text-gray-400 text-sm text-gray-600 ">
         This is an example answer. This is an example answer. This is an example
