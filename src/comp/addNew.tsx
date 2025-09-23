@@ -31,6 +31,7 @@ export default function AddNew() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [link, setLink] = useState("Link will be generated here");
+  const [created, setCreated] = useState(false);
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link);
     setCopied(true);
@@ -55,6 +56,7 @@ export default function AddNew() {
             setLink(
               `${window.location.origin}/link/${data.link._id}/${data.link.name}`
             );
+            setCreated(true);
             setLoading(false);
           });
         } else {
@@ -81,20 +83,22 @@ export default function AddNew() {
         className="bg-background/60 backdrop-blur-md z-200"
       >
         <Dialog open={open} onOpenChange={setOpen}>
-          <form onSubmit={handleSubmit}>
-            <DialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <Link /> Link
-              </DropdownMenuItem>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+          <DialogTrigger asChild>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <Link /> Link
+            </DropdownMenuItem>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-[525px]">
+            <form onSubmit={handleSubmit}>
               <DialogHeader>
                 <DialogTitle>Create a Link</DialogTitle>
                 <DialogDescription>
                   create a link to share with others. to ask you questions
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4">
+
+              <div className="grid gap-4 mb-5">
                 <div className="grid gap-3">
                   <Label htmlFor="name-1">Name*</Label>
                   <Input
@@ -104,11 +108,13 @@ export default function AddNew() {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-                <div className="flex items-center justify-between w-full max-w-md rounded-md border bg-muted px-3 py-2 font-inter text-sm">
+
+                <div className="flex items-center justify-between w-full max-w-md rounded-md border bg-muted px-3 py-2 text-sm">
                   <span className="truncate">{link}</span>
                   <Button
                     variant="ghost"
                     size="icon"
+                    type="button"
                     onClick={handleCopy}
                     className="ml-2"
                   >
@@ -120,16 +126,21 @@ export default function AddNew() {
                   </Button>
                 </div>
               </div>
+
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" type="button">
+                    Cancel
+                  </Button>
                 </DialogClose>
-                <Button type="submit" disabled={loading}>
-                  {loading ? "Creating..." : "Create Link"}
-                </Button>
+                {!created && (
+                  <Button type="submit" disabled={loading}>
+                    {loading ? "Creating..." : "Create Link"}
+                  </Button>
+                )}
               </DialogFooter>
-            </DialogContent>
-          </form>
+            </form>
+          </DialogContent>
         </Dialog>
 
         <DropdownMenuItem onSelect={() => router.push("/new-question")}>

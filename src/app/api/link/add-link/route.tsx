@@ -28,13 +28,13 @@ export async function POST(req: Request) {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    await Link.create(newLink);
+    const createdLink = await Link.create(newLink);
 
     return NextResponse.json(
       {
         success: true,
         message: "Link added successfully",
-        link: newLink,
+        link: createdLink,
       },
       { status: 201 }
     );
