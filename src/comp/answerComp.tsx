@@ -8,7 +8,7 @@ export default function AnswerComp({ isReply }: { isReply: boolean }) {
       }`}
     >
       {isReply && (
-        <div className="absolute -top-10 p-2 bg-[#0a0a0a] w-[90%] mx-auto border right-2">
+        <div className="absolute -top-10 p-2 dark:bg-[#0a0a0a] bg-[#ffffff] w-[90%] mx-auto border right-2">
           <Top />
           <div className="mt-2 dark:text-gray-400 text-sm text-gray-600">
             content
