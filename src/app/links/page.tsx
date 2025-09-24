@@ -1,11 +1,14 @@
 "use client";
 
 import LinkComp from "@/comp/linkComp";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MyLinksPage() {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   useEffect(() => {
     const fetchLinks = async () => {
       setLoading(true);
@@ -20,8 +23,16 @@ export default function MyLinksPage() {
   }, []);
 
   return (
-    <div>
-      <h1>My Links</h1>
+    <div className="md:p-2">
+      <div className="sticky top-12 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0  text-gray-500 flex items-center justify-between">
+        <button
+          onClick={() => router.back()}
+          className="hover:text-gray-300 cursor-pointer flex items-center gap-1"
+        >
+          <ArrowLeft /> Back
+        </button>
+      </div>
+      <h1 className="text-2xl font-bold mt-4">My Links</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (

@@ -89,7 +89,7 @@ export default function AddNew() {
             </DropdownMenuItem>
           </DialogTrigger>
 
-          <DialogContent className="sm:max-w-[525px]">
+          <DialogContent className="sm:max-w-[625px]">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
                 <DialogTitle>Create a Link</DialogTitle>
@@ -98,7 +98,7 @@ export default function AddNew() {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid gap-4 mb-5">
+              <div className="flex flex-col items-stretch w-full  gap-3 mb-5">
                 <div className="grid gap-3">
                   <Label htmlFor="name-1">Name*</Label>
                   <Input
@@ -108,36 +108,53 @@ export default function AddNew() {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-
-                <div className="flex items-center justify-between w-full max-w-md rounded-md border bg-muted px-3 py-2 text-sm">
-                  <span className="truncate">{link}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={handleCopy}
-                    className="ml-2"
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                {created && (
+                  <>
+                    <p className="text-sm text-gray-500">
+                      Link created successfully! now you can copy and share it
+                      with others.
+                    </p>
+                    <div className="flex items-center justify-between w-[100%] max-w-[100%] rounded-md border bg-muted px-3 py-2 text-sm">
+                      <span className="truncate ">{link}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={handleCopy}
+                        className="ml-2"
+                      >
+                        {copied ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline" type="button">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => {
+                      setCreated(false);
+                      setName("");
+                    }}
+                  >
                     Cancel
                   </Button>
                 </DialogClose>
-                {!created && (
-                  <Button type="submit" disabled={loading}>
-                    {loading ? "Creating..." : "Create Link"}
-                  </Button>
-                )}
+
+                <Button type="submit" disabled={loading}>
+                  {loading
+                    ? "Creating..."
+                    : created
+                    ? "Create another Link"
+                    : "Create Link"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
