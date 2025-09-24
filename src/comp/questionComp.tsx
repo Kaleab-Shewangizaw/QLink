@@ -128,10 +128,8 @@ export function Bottom({
     let newDownVotes = [...downVotes];
 
     if (upVotes.includes(session.user.id)) {
-      // remove upvote
       newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
     } else {
-      // add upvote, remove from downvotes if exists
       newUpVotes = [...upVotes, session.user.id];
       newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
     }
@@ -163,10 +161,9 @@ export function Bottom({
   return (
     <div className="pt-2 flex items-center justify-between">
       <div className="flex text-gray-500 items-center gap-2">
-        {/* Upvote */}
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            upVotes.includes(session?.user.id)
+            upVotes.includes(session.user.id)
               ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
               : ""
           }`}
@@ -176,10 +173,9 @@ export function Bottom({
           <span className="text-sm">{upVotes.length}</span>
         </div>
 
-        {/* Downvote */}
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            downVotes.includes(session?.user.id)
+            downVotes.includes(session.user.id)
               ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
               : ""
           }`}

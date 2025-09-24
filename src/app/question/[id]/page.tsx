@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@/app/lib/auth-client";
 import AnswerComp from "@/comp/answerComp";
 import { Bottom, Top } from "@/comp/questionComp";
 import { QuestionPageSkeleton } from "@/comp/questionPageSkeleton";
@@ -15,16 +16,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { Answer, IQuestion } from "@/lib/models/qModels";
+import { ArrowLeft, TrashIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function QuestionPage() {
   const [showMore, setShowMore] = useState(false);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<IQuestion | null>(null);
   const router = useRouter();
   const params = useParams();
   const questionId = params.id as string;
+  const { data: session } = authClient.useSession();
+  const userId = session?.user?.id;
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -40,6 +44,22 @@ export default function QuestionPage() {
     if (questionId) fetchQuestion();
   }, [questionId]);
 
+  const handleDelete = async (id: string | undefined) => {
+    if (!id) return;
+    try {
+      const res = await fetch(`/api/question/delete-question/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        router.push("/");
+      } else {
+        console.error("Failed to delete question");
+      }
+    } catch (error) {
+      console.error("Error deleting question:", error);
+    }
+  };
+
   return (
     <div className="px-2 pb-5 flex flex-col">
       <div className="sticky top-13 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0 border border-gray-700 border-b-0 text-gray-500 flex items-center justify-between">
@@ -49,47 +69,63 @@ export default function QuestionPage() {
         >
           <ArrowLeft /> Back
         </button>
-        <Dialog>
-          <form action="">
-            <DialogTrigger asChild>
-              <Button variant="outline">Answer</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[525px]">
-              <DialogHeader>
-                <DialogTitle>
-                  <h1 className="text-sm text-gray-400 font-normal">
-                    Answer to{" "}
-                    <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
-                      username
-                    </span>
-                    &apos;s question
-                  </h1>
-                </DialogTitle>
-                <DialogDescription>
-                  <h1 className="text-lg font-semibold line-clamp-3 text-gray-500">
-                    {data?.title}
-                  </h1>
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4">
-                <div className="grid gap-3">
-                  <Textarea
-                    id="answer"
-                    name="answer"
-                    className="w-full"
-                    rows={10}
-                  />
+        <div className="flex items-center gap-2">
+          {userId === data?.asker && (
+            <>
+              <Button
+                variant={"outline"}
+                className="text-red-400"
+                onClick={() => {
+                  if (confirm("are you sure you want to delete this question?"))
+                    handleDelete(data._id);
+                }}
+              >
+                <TrashIcon /> Delete
+              </Button>
+            </>
+          )}
+          <Dialog>
+            <form action="">
+              <DialogTrigger asChild>
+                <Button variant="outline">Answer</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    <h1 className="text-sm text-gray-400 font-normal">
+                      Answer to{" "}
+                      <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
+                        username
+                      </span>
+                      &apos;s question
+                    </h1>
+                  </DialogTitle>
+                  <DialogDescription>
+                    <h1 className="text-lg font-semibold line-clamp-3 text-gray-500">
+                      {data?.title}
+                    </h1>
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4">
+                  <div className="grid gap-3">
+                    <Textarea
+                      id="answer"
+                      name="answer"
+                      className="w-full"
+                      rows={10}
+                    />
+                  </div>
                 </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button type="submit">Answer</Button>
-              </DialogFooter>
-            </DialogContent>
-          </form>
-        </Dialog>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Answer</Button>
+                </DialogFooter>
+              </DialogContent>
+            </form>
+          </Dialog>
+        </div>
       </div>
 
       {data ? (
@@ -117,12 +153,12 @@ export default function QuestionPage() {
 
           <div className="rounded-t-none border border-gray-700 rounded-md p-3">
             <h2 className="text-lg font-semibold mb-2">Answers</h2>
-            {data.answers.length === 0 && (
+            {data?.answers?.length === 0 && (
               <p className="text-gray-500">
                 No answers yet. Be the first to answer!
               </p>
             )}
-            {data.answers.map((answer: any, idx: number) => (
+            {data?.answers?.map((answer: Answer, idx: number) => (
               <AnswerComp key={idx} data={answer} />
             ))}
           </div>
