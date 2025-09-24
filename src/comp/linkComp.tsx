@@ -44,7 +44,13 @@ export default function LinkComp({ link }: { link: any }) {
           >
             {copied ? <Check className="text-green-500" /> : <Copy />}
           </Button>
-          <Button size="sm" variant={link.isOpen ? "destructive" : "default"}>
+          <Button
+            size="sm"
+            variant="outline"
+            className={`font-normal ${
+              link.isOpen ? " text-red-400 " : " text-green-500 "
+            }`}
+          >
             {link.isOpen ? "Close" : "Open"}
           </Button>
         </div>

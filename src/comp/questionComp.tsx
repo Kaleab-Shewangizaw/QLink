@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import Link from "next/link";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
 import { BsEye } from "react-icons/bs";
@@ -21,8 +21,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { IQuestion } from "@/lib/models/qModels";
 
-export function Top() {
+export function Top({ question }: { question?: IQuestion }) {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState();
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`/api/user/get-user/${question?.asker}`);
+        const data = await res.json();
+        setData(data);
+      } catch (error) {
+        console.log("error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, [question?.asker]);
   return (
     <div className="w-full flex justify-between items-center">
       <div className="flex items-center text-gray-500 gap-2 hover:text-gray-200 cursor-pointer">
@@ -199,7 +216,7 @@ export function Bottom({
 export default function QuestionComp({ question }: { question?: any }) {
   return (
     <div className="w-full p-2  shadow-md/10 dark:border rounded-md dark:border-gray-900 ">
-      <Top />
+      <Top question={question} />
       <div className="p-2">{question?.title}</div>
       <Bottom question={question} />
     </div>
