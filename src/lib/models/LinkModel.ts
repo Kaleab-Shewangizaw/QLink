@@ -1,11 +1,10 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { Answer } from "./qModels";
 
-interface ILink extends Document {
+export interface ILink extends Document {
   name: string;
   owner: string;
   questions: Answer[];
-  questionNumber: number;
   isOpen: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -71,7 +70,6 @@ const linkSchema: Schema = new Schema(
       },
     ],
 
-    questionNumber: { type: Number, default: 0 },
     isOpen: { type: Boolean, default: true },
   },
   { timestamps: true }

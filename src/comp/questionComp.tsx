@@ -127,11 +127,11 @@ export function Bottom({
     let newUpVotes = [...upVotes];
     let newDownVotes = [...downVotes];
 
-    if (upVotes.includes(session.user.id)) {
-      newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
+    if (upVotes.includes(session?.user.id)) {
+      newUpVotes = upVotes.filter((vote) => vote !== session?.user.id);
     } else {
-      newUpVotes = [...upVotes, session.user.id];
-      newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
+      newUpVotes = [...upVotes, session?.user.id];
+      newDownVotes = downVotes.filter((vote) => vote !== session?.user.id);
     }
 
     setUpVotes(newUpVotes);
@@ -144,13 +144,13 @@ export function Bottom({
     let newUpVotes = [...upVotes];
     let newDownVotes = [...downVotes];
 
-    if (downVotes.includes(session.user.id)) {
+    if (downVotes.includes(session?.user.id)) {
       // remove downvote
-      newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
+      newDownVotes = downVotes.filter((vote) => vote !== session?.user.id);
     } else {
       // add downvote, remove from upvotes if exists
-      newDownVotes = [...downVotes, session.user.id];
-      newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
+      newDownVotes = [...downVotes, session?.user.id];
+      newUpVotes = upVotes.filter((vote) => vote !== session?.user.id);
     }
 
     setUpVotes(newUpVotes);
@@ -163,7 +163,7 @@ export function Bottom({
       <div className="flex text-gray-500 items-center gap-2">
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            upVotes.includes(session.user.id)
+            upVotes.includes(session?.user.id)
               ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
               : ""
           }`}
@@ -175,7 +175,7 @@ export function Bottom({
 
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            downVotes.includes(session.user.id)
+            downVotes.includes(session?.user.id)
               ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
               : ""
           }`}

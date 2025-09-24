@@ -1,16 +1,33 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ILink } from "@/lib/models/LinkModel";
 import { Check, Copy } from "lucide-react";
-
 import Link from "next/link";
 import { useState } from "react";
 
-export default function LinkComp({ link }: { link: any }) {
+export default function LinkComp({ link }: { link: ILink }) {
+  const [isClosed, setIsClosed] = useState(link.isOpen);
   const [copied, setCopied] = useState(false);
+
+  const handleClose = async () => {
+    try {
+      const newState = !isClosed; // compute new state
+      setIsClosed(newState);
+
+      await fetch(`/api/link/update-link/${link._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isOpen: newState }),
+      });
+    } catch (error) {
+      console.error("Failed to update link state:", error);
+    }
+  };
+
   return (
     <div>
-      <div className="w-full flex items-center justify-between  mt-4 shadow-md/10 dark:border rounded-md dark:border-gray-900 px-2 py-4 ">
+      <div className="w-full flex items-center justify-between mt-4 shadow-md/10 dark:border rounded-md dark:border-gray-900 px-2 py-4">
         <div>
           <h1>
             <Link
@@ -19,7 +36,7 @@ export default function LinkComp({ link }: { link: any }) {
             >
               {link.name}
             </Link>
-            {link.isOpen ? (
+            {isClosed ? (
               <span className="text-xs text-green-500">Open</span>
             ) : (
               <span className="text-xs text-red-500">Closed</span>
@@ -29,10 +46,10 @@ export default function LinkComp({ link }: { link: any }) {
             {link.questions.length} Questions
           </div>
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-gray-400 flex items-center">
           <Button
             size="sm"
-            variant={"ghost"}
+            variant="ghost"
             className="mr-2"
             onClick={() => {
               navigator.clipboard.writeText(
@@ -48,10 +65,11 @@ export default function LinkComp({ link }: { link: any }) {
             size="sm"
             variant="outline"
             className={`font-normal ${
-              link.isOpen ? " text-red-400 " : " text-green-500 "
+              isClosed ? "text-red-400" : "text-green-500"
             }`}
+            onClick={handleClose}
           >
-            {link.isOpen ? "Close" : "Open"}
+            {isClosed ? "Close" : "Open"}
           </Button>
         </div>
       </div>
