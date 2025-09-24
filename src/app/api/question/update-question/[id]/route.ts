@@ -10,6 +10,8 @@ interface UpdateQuestionInterface {
   isAnonymous: boolean;
   likes?: number;
   views?: number;
+  upVotes?: string[];
+  downVotes?: string[];
   answers?: Answer[];
 }
 
@@ -22,7 +24,8 @@ export async function PUT(
     title,
     description,
     isAnonymous,
-    likes,
+    upVotes,
+    downVotes,
     views,
     answers,
   }: UpdateQuestionInterface = await req.json();
@@ -36,13 +39,15 @@ export async function PUT(
     if (!session?.user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
     const question = await Question.findByIdAndUpdate(
       id,
       {
         title,
         description,
         isAnonymous,
-        likes,
+        upVotes,
+        downVotes,
         views,
         answers,
       },

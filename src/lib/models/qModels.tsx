@@ -19,7 +19,8 @@ export interface IQuestion extends Document {
   isAnonymous: boolean;
   description?: string;
   asker: string;
-  likes: number;
+  upVotes: string[];
+  downVotes: string[];
   answers?: Answer[];
   views: number;
   createdAt: Date;
@@ -43,10 +44,18 @@ const QuestionSchema: Schema = new Schema(
       type: Boolean,
       default: false,
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
+    upVotes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    downVotes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
     asker: {
       type: Schema.Types.ObjectId,

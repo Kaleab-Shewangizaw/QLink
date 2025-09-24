@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import Link from "next/link";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
 import { BsEye } from "react-icons/bs";
 import { BiComment, BiDownArrow, BiUpArrow } from "react-icons/bi";
+import { authClient } from "@/app/lib/auth-client";
 import {
   Dialog,
   DialogClose,
@@ -22,10 +22,12 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { IQuestion } from "@/lib/models/qModels";
+import { User } from "better-auth";
 
 export function Top({ question }: { question?: IQuestion }) {
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<User | null>(null);
+  const { data: session } = authClient.useSession();
+
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
@@ -33,7 +35,7 @@ export function Top({ question }: { question?: IQuestion }) {
         const data = await res.json();
         setUser(data);
       } catch (error) {
-        console.error("Error fetching question:", error);
+        console.error("Error fetching asker:", error);
       }
     };
 
@@ -53,9 +55,13 @@ export function Top({ question }: { question?: IQuestion }) {
           <AvatarFallback>?</AvatarFallback>
         </Avatar>
 
-        <p className=" text-sm  flex items-center ">
+        <p className=" text-sm flex items-center">
           <Link href="" className="">
-            {question?.isAnonymous ? "Anonymous" : user?.name}
+            {session?.user.id === question?.asker && question?.isAnonymous
+              ? `Anonymous/${user?.name}`
+              : question?.isAnonymous
+              ? "Anonymous"
+              : user?.name}
           </Link>
         </p>
       </div>
@@ -73,66 +79,125 @@ export function Bottom({
 }: {
   isAnswer?: boolean;
   isReading?: boolean;
-  question?: any;
+  question?: IQuestion;
 }) {
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState("");
-  const [count, setCount] = useState(0);
+  const { data: session } = authClient.useSession();
   const [showMore, setShowMore] = useState(false);
+  const [upVotes, setUpVotes] = useState<string[]>(question?.upVotes || []);
+  const [downVotes, setDownVotes] = useState<string[]>(
+    question?.downVotes || []
+  );
+
+  const handleRead = async (id: string) => {
+    try {
+      await fetch(`/api/question/update-question/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          views: question?.views ? question?.views + 1 : 1,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating question views:", error);
+    }
+  };
+
+  const updateVotesInDB = async (
+    newUpVotes: string[],
+    newDownVotes: string[]
+  ) => {
+    if (!question?._id) return;
+    try {
+      await fetch(`/api/question/update-question/${question._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          upVotes: newUpVotes,
+          downVotes: newDownVotes,
+        }),
+      });
+    } catch (err) {
+      console.log("Error updating votes:", err);
+    }
+  };
+
+  const handleUpvote = () => {
+    if (!session?.user?.id) return;
+    let newUpVotes = [...upVotes];
+    let newDownVotes = [...downVotes];
+
+    if (upVotes.includes(session.user.id)) {
+      // remove upvote
+      newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
+    } else {
+      // add upvote, remove from downvotes if exists
+      newUpVotes = [...upVotes, session.user.id];
+      newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
+    }
+
+    setUpVotes(newUpVotes);
+    setDownVotes(newDownVotes);
+    updateVotesInDB(newUpVotes, newDownVotes);
+  };
+
+  const handleDownvote = () => {
+    if (!session?.user?.id) return;
+    let newUpVotes = [...upVotes];
+    let newDownVotes = [...downVotes];
+
+    if (downVotes.includes(session.user.id)) {
+      // remove downvote
+      newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
+    } else {
+      // add downvote, remove from upvotes if exists
+      newDownVotes = [...downVotes, session.user.id];
+      newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
+    }
+
+    setUpVotes(newUpVotes);
+    setDownVotes(newDownVotes);
+    updateVotesInDB(newUpVotes, newDownVotes);
+  };
 
   return (
     <div className="pt-2 flex items-center justify-between">
-      <div className="flex  text-gray-500 items-center ">
+      <div className="flex text-gray-500 items-center gap-2">
+        {/* Upvote */}
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            isLiked === "T" &&
-            "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
+            upVotes.includes(session?.user.id)
+              ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
+              : ""
           }`}
-          onClick={() => {
-            if (isLiked === "F") {
-              setIsLiked("T");
-              setCount(count + 2);
-            } else if (isLiked === "T") {
-              setIsLiked("");
-              setCount(count - 1);
-            } else {
-              setIsLiked("T");
-              setCount(count + 1);
-            }
-          }}
+          onClick={handleUpvote}
         >
           <BiUpArrow />
+          <span className="text-sm">{upVotes.length}</span>
         </div>
+
+        {/* Downvote */}
         <div
-          className={`cursor-pointer rounded-md p-1 px-1.5 ml-2 ${
-            isLiked == "F" &&
-            "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
+          className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
+            downVotes.includes(session?.user.id)
+              ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
+              : ""
           }`}
-          onClick={() => {
-            if (isLiked === "F") {
-              setIsLiked("");
-              setCount(count + 1);
-            } else if (isLiked === "T") {
-              setIsLiked("F");
-              setCount(count - 2);
-            } else {
-              setIsLiked("F");
-              setCount(count - 1);
-            }
-          }}
+          onClick={handleDownvote}
         >
           <BiDownArrow />
+          <span className="text-sm">{downVotes.length}</span>
         </div>
-        <span className="text-sm ml-3">{count}</span>
       </div>
+
       <div className="flex items-center gap-4">
         {!isAnswer && (
           <>
             <div className="text-gray-500 flex items-start gap-1 text-sm">
-              3 <BsEye size={15} />
+              {question?.views} <BsEye size={15} />
             </div>
             <div className="text-gray-500 flex items-start gap-1 text-sm">
-              3 <BiComment size={15} />
+              {question?.answers?.length} <BiComment size={15} />
             </div>
           </>
         )}
@@ -175,7 +240,7 @@ export function Bottom({
                         culpa fugiat commodi! Soluta, eius!
                       </p>
                       <p
-                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline  cursor-pointer"
+                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
                         onClick={() => setShowMore(!showMore)}
                       >
                         Show more
@@ -208,6 +273,7 @@ export function Bottom({
             size="sm"
             onClick={() => {
               router.push(`/question/${question?._id}`);
+              handleRead(question?._id as string);
             }}
           >
             Answer/read
@@ -218,9 +284,9 @@ export function Bottom({
   );
 }
 
-export default function QuestionComp({ question }: { question?: any }) {
+export default function QuestionComp({ question }: { question?: IQuestion }) {
   return (
-    <div className="w-full p-2  shadow-md/10 dark:border rounded-md dark:border-gray-900 ">
+    <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
       <Top question={question} />
       <div className="p-2">{question?.title}</div>
       <Bottom question={question} />

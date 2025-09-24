@@ -95,7 +95,7 @@ export default function QuestionPage() {
       {data ? (
         <div>
           <div className="border border-gray-700 p-4 rounded-b-none border-y-0">
-            <Top />
+            <Top question={data} />
             <h1 className="text-lg font-semibold">{data.title}</h1>
             <p
               className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
@@ -111,7 +111,7 @@ export default function QuestionPage() {
               read {showMore ? "less" : "more"}
             </p>
             <div className="py-2 border-t border-gray-700 mt-5">
-              <Bottom isReading />
+              <Bottom isReading question={data} />
             </div>
           </div>
 
