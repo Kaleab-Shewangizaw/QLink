@@ -25,32 +25,37 @@ import { IQuestion } from "@/lib/models/qModels";
 
 export function Top({ question }: { question?: IQuestion }) {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState();
+  const [user, setUser] = useState();
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchQuestion = async () => {
       try {
         const res = await fetch(`/api/user/get-user/${question?.asker}`);
         const data = await res.json();
-        setData(data);
+        setUser(data);
       } catch (error) {
-        console.log("error:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching question:", error);
       }
     };
-    fetchUser();
+
+    if (question?.asker) fetchQuestion();
   }, [question?.asker]);
+
   return (
     <div className="w-full flex justify-between items-center">
       <div className="flex items-center text-gray-500 gap-2 hover:text-gray-200 cursor-pointer">
         <Avatar>
-          <AvatarImage src="/profilePicture2.png" alt="user" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage
+            src={
+              question?.isAnonymous ? "" : user?.image || "/profilePicture2.png"
+            }
+            alt="user"
+          />
+          <AvatarFallback>?</AvatarFallback>
         </Avatar>
 
         <p className=" text-sm  flex items-center ">
           <Link href="" className="">
-            username{" "}
+            {question?.isAnonymous ? "Anonymous" : user?.name}
           </Link>
         </p>
       </div>
