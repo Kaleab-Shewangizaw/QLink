@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -21,52 +20,67 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { IQuestion } from "@/lib/models/qModels";
+import { Answer, IQuestion } from "@/lib/models/qModels";
 import { User } from "better-auth";
 
-export function Top({ question }: { question?: IQuestion }) {
-  const [user, setUser] = useState<User | null>(null);
+// ------------------ TOP -------------------
+export function Top({
+  question,
+  answer,
+}: {
+  question?: IQuestion;
+  answer?: Answer;
+}) {
+  const [user, setUser] = useState(null);
   const { data: session } = authClient.useSession();
 
+  const asker = question?.asker || (answer && answer.respondent);
+
   useEffect(() => {
-    const fetchQuestion = async () => {
+    const fetchUser = async () => {
+      if (!asker) return;
       try {
-        const res = await fetch(`/api/user/get-user/${question?.asker}`);
-        const data = await res.json();
-        setUser(data);
+        const res = await fetch(`/api/user/get-user/${asker}`);
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
+          console.error("Failed to fetch user data");
+        }
       } catch (error) {
-        console.error("Error fetching asker:", error);
+        console.error("Error fetching user data:", error);
       }
     };
+    fetchUser();
+  }, [asker]);
+  console.log("question?.asker", question);
 
-    if (question?.asker) fetchQuestion();
-  }, [question?.asker]);
+  const isAnonymous = question?.isAnonymous;
 
   return (
     <div className="w-full flex justify-between items-center">
       <div className="flex items-center text-gray-500 gap-2 hover:text-gray-200 cursor-pointer">
         <Avatar>
           <AvatarImage
-            src={
-              question?.isAnonymous ? "" : user?.image || "/profilePicture2.png"
-            }
+            src={isAnonymous ? "" : user?.image || "/profilePicture2.png"}
             alt="user"
           />
           <AvatarFallback>?</AvatarFallback>
         </Avatar>
 
         <p className=" text-sm flex items-center">
-          <Link href="" className="">
-            {session?.user.id === question?.asker && question?.isAnonymous
-              ? `Anonymous/${user?.name}`
-              : question?.isAnonymous
+          <Link href="">
+            {session?.user.id === asker && isAnonymous
+              ? `Anonymous/${user?.name || "name"}`
+              : isAnonymous
               ? "Anonymous"
-              : user?.name}
+              : user?.name || "name"}
           </Link>
         </p>
       </div>
       <div className="text-sm text-gray-500">
-        {new Date().toString().slice(0, 15)}
+        {answer?.createdAt.toString().slice(0, 10) ||
+          question?.createdAt.toString().slice(0, 10)}
       </div>
     </div>
   );
@@ -76,40 +90,35 @@ export function Bottom({
   isAnswer,
   isReading,
   question,
+  answer,
 }: {
   isAnswer?: boolean;
   isReading?: boolean;
   question?: IQuestion;
+  answer?: Answer;
 }) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const [showMore, setShowMore] = useState(false);
-  const [upVotes, setUpVotes] = useState<string[]>(question?.upVotes || []);
+
+  const [upVotes, setUpVotes] = useState<string[]>(
+    question?.upVotes || answer?.upVotes || []
+  );
   const [downVotes, setDownVotes] = useState<string[]>(
-    question?.downVotes || []
+    question?.downVotes || answer?.downVotes || []
   );
 
-  const handleRead = async (id: string) => {
-    try {
-      await fetch(`/api/question/update-question/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          views: question?.views ? question?.views + 1 : 1,
-        }),
-      });
-    } catch (error) {
-      console.error("Error updating question views:", error);
-    }
-  };
-
+  // Update DB for both question and answer
   const updateVotesInDB = async (
     newUpVotes: string[],
     newDownVotes: string[]
   ) => {
-    if (!question?._id) return;
+    const id = question?._id || answer?._id;
+    const apiRoute = question
+      ? `/api/question/update-question/${id}`
+      : `/api/answer/update-answer/${id}`;
     try {
-      await fetch(`/api/question/update-question/${question._id}`, {
+      await fetch(apiRoute, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -127,11 +136,11 @@ export function Bottom({
     let newUpVotes = [...upVotes];
     let newDownVotes = [...downVotes];
 
-    if (upVotes.includes(session?.user.id)) {
-      newUpVotes = upVotes.filter((vote) => vote !== session?.user.id);
+    if (upVotes.includes(session.user.id)) {
+      newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
     } else {
-      newUpVotes = [...upVotes, session?.user.id];
-      newDownVotes = downVotes.filter((vote) => vote !== session?.user.id);
+      newUpVotes = [...upVotes, session.user.id];
+      newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
     }
 
     setUpVotes(newUpVotes);
@@ -144,18 +153,31 @@ export function Bottom({
     let newUpVotes = [...upVotes];
     let newDownVotes = [...downVotes];
 
-    if (downVotes.includes(session?.user.id)) {
-      // remove downvote
-      newDownVotes = downVotes.filter((vote) => vote !== session?.user.id);
+    if (downVotes.includes(session.user.id)) {
+      newDownVotes = downVotes.filter((vote) => vote !== session.user.id);
     } else {
-      // add downvote, remove from upvotes if exists
-      newDownVotes = [...downVotes, session?.user.id];
-      newUpVotes = upVotes.filter((vote) => vote !== session?.user.id);
+      newDownVotes = [...downVotes, session.user.id];
+      newUpVotes = upVotes.filter((vote) => vote !== session.user.id);
     }
 
     setUpVotes(newUpVotes);
     setDownVotes(newDownVotes);
     updateVotesInDB(newUpVotes, newDownVotes);
+  };
+
+  const handleRead = async (id: string) => {
+    if (!question) return;
+    try {
+      await fetch(`/api/question/update-question/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          views: question?.views ? question?.views + 1 : 1,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating question views:", error);
+    }
   };
 
   return (
@@ -199,10 +221,6 @@ export function Bottom({
         )}
         {isAnswer ? (
           <>
-            <div className="text-gray-500 flex items-start gap-1 text-sm">
-              3 <Reply size={15} />
-            </div>
-
             <Dialog>
               <form action="">
                 <DialogTrigger asChild>
@@ -214,15 +232,7 @@ export function Bottom({
                   <DialogHeader>
                     <DialogTitle>
                       <h1 className="text-sm  text-gray-400 font-normal ">
-                        reply to{" "}
-                        <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
-                          username
-                        </span>
-                        &apos;s answer in{" "}
-                        <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
-                          username
-                        </span>
-                        &apos;s question
+                        Reply to answer
                       </h1>
                     </DialogTitle>
                     <DialogDescription>
@@ -231,25 +241,25 @@ export function Bottom({
                           !showMore && "line-clamp-3"
                         }`}
                       >
-                        Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Tempore, beatae praesentium harum eius quis quae
-                        culpa fugiat commodi! Soluta, eius!
+                        {answer?.text}
                       </p>
-                      <p
-                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
-                        onClick={() => setShowMore(!showMore)}
-                      >
-                        Show more
-                      </p>
+                      {answer?.text && answer?.text.length > 100 && (
+                        <p
+                          className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
+                          onClick={() => setShowMore(!showMore)}
+                        >
+                          {showMore ? "Show less" : "Show more"}
+                        </p>
+                      )}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4">
                     <div className="grid gap-3">
                       <Textarea
-                        id="name-1"
-                        name="name"
+                        id="reply"
+                        name="reply"
                         className="w-full"
-                        rows={10}
+                        rows={6}
                       />
                     </div>
                   </div>
@@ -257,7 +267,7 @@ export function Bottom({
                     <DialogClose asChild>
                       <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button type="submit">Answer</Button>
+                    <Button type="submit">Reply</Button>
                   </DialogFooter>
                 </DialogContent>
               </form>

@@ -64,8 +64,7 @@ export default function LinkComp({ link }: { link: ILink }) {
           <Button
             size="sm"
             variant="outline"
-            className={`font-normal ${
-              isClosed ? "text-red-400" : "text-green-500"
+            className={`font-normal 
             }`}
             onClick={handleClose}
           >

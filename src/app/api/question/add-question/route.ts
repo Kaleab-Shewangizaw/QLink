@@ -49,13 +49,15 @@ export async function POST(req: Request) {
       answers: [],
     };
 
-    await Question.create(newQuestion);
+    const questionDoc = await Question.create(newQuestion);
+
+    await questionDoc.populate({ path: "asker", strictPopulate: false });
 
     return NextResponse.json(
       {
         success: true,
         message: "question added successfully",
-        question: newQuestion,
+        question: questionDoc,
       },
       { status: 201 }
     );

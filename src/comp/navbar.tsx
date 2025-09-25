@@ -41,7 +41,7 @@ export default function Navbar() {
     <div className="sticky top-0 left-0 backdrop:blur-2xl backdrop-blur-2xl z-100 flex justify-between items-center p-2">
       <Logo />
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-8 md:gap-4">
         {isPending ? (
           <Loader2 size={16} className="animate-spin" />
         ) : loggedIn ? (
@@ -58,7 +58,7 @@ export default function Navbar() {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              align="end"
+              align="center"
               className="bg-background/60 backdrop-blur-md z-200"
             >
               <DropdownMenuLabel>

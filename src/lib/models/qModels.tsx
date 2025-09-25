@@ -1,14 +1,15 @@
+import { User } from "better-auth";
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface Answer {
   text: string;
-  respondent: string;
-  likes: number;
+  respondent: User | string;
+  upVotes: string[];
+  downVotes: string[];
   isReply: boolean;
-  replies?: Answer[];
+  replies: number;
   questionId: string;
   repliedTo?: string;
-
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,7 +19,7 @@ export interface IQuestion extends Document {
   title: string;
   isAnonymous: boolean;
   description?: string;
-  asker: string;
+  asker: User | string;
   upVotes: string[];
   downVotes: string[];
   answers?: Answer[];
@@ -59,7 +60,7 @@ const QuestionSchema: Schema = new Schema(
 
     asker: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
 
@@ -73,32 +74,22 @@ const QuestionSchema: Schema = new Schema(
           type: String,
           required: true,
         },
-        respondant: {
+        respondent: {
           type: String,
         },
-        replies: [
+        replies: { type: Number, default: 0 },
+        upVotes: [
           {
-            text: {
-              type: String,
-              required: true,
-            },
-            respondant: {
-              type: String,
-            },
-            createdAt: {
-              type: Date,
-              default: Date.now,
-            },
-            updatedAt: {
-              type: Date,
-              default: Date.now,
-            },
+            type: Schema.Types.ObjectId,
+            ref: "User",
           },
         ],
-        likes: {
-          type: Number,
-          default: 0,
-        },
+        downVotes: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
         questionId: {
           type: Schema.Types.ObjectId,
           ref: "Question",

@@ -4,31 +4,11 @@ import dbConnect from "@/lib/mongodb";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-interface UpdateQuestionInterface {
-  title: string;
-  description?: string;
-  isAnonymous: boolean;
-  likes?: number;
-  views?: number;
-  upVotes?: string[];
-  downVotes?: string[];
-  answers?: Answer[];
-}
-
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
-  const {
-    title,
-    description,
-    isAnonymous,
-    upVotes,
-    downVotes,
-    views,
-    answers,
-  }: UpdateQuestionInterface = await req.json();
+  const { id } = await context.params;
 
   try {
     await dbConnect();
@@ -40,17 +20,37 @@ export async function PUT(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    const body = await req.json();
+
+    if (body.answers && body.answers.length > 0) {
+      const newAnswer = body.answers[body.answers.length - 1];
+      newAnswer.respondent = session.user.id;
+
+      const question = await Question.findByIdAndUpdate(
+        id,
+        { $push: { answers: newAnswer } },
+        { new: true }
+      );
+
+      if (!question) {
+        return NextResponse.json(
+          { success: false, message: "Question not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        { success: true, message: "Answer added successfully", question },
+        { status: 200 }
+      );
+    }
+
+    // Otherwise update question fields
+    const { title, description, isAnonymous, upVotes, downVotes, views } = body;
+
     const question = await Question.findByIdAndUpdate(
       id,
-      {
-        title,
-        description,
-        isAnonymous,
-        upVotes,
-        downVotes,
-        views,
-        answers,
-      },
+      { title, description, isAnonymous, upVotes, downVotes, views },
       { new: true }
     );
 
