@@ -92,6 +92,7 @@ export default function QuestionPage() {
         const data = await res.json();
         setAnswers(data.question.answers);
         setNewAnswer("");
+        setOpen(false);
       } else {
         console.error("Failed to add answer");
       }

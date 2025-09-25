@@ -1,5 +1,5 @@
 import { auth } from "@/app/lib/auth";
-import { Answer, Question } from "@/lib/models/qModels";
+import { Question } from "@/lib/models/qModels";
 import dbConnect from "@/lib/mongodb";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -45,7 +45,6 @@ export async function PUT(
       );
     }
 
-    // Otherwise update question fields
     const { title, description, isAnonymous, upVotes, downVotes, views } = body;
 
     const question = await Question.findByIdAndUpdate(

@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
-import { User } from "better-auth";
 
 // ------------------ TOP -------------------
 export function Top({
@@ -53,7 +52,6 @@ export function Top({
     };
     fetchUser();
   }, [asker]);
-  console.log("question?.asker", question);
 
   const isAnonymous = question?.isAnonymous;
 
@@ -108,24 +106,31 @@ export function Bottom({
     question?.downVotes || answer?.downVotes || []
   );
 
-  // Update DB for both question and answer
+  // 👇 update API route based on question/answer
   const updateVotesInDB = async (
     newUpVotes: string[],
     newDownVotes: string[]
   ) => {
-    const id = question?._id || answer?._id;
-    const apiRoute = question
-      ? `/api/question/update-question/${id}`
-      : `/api/answer/update-answer/${id}`;
     try {
-      await fetch(apiRoute, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          upVotes: newUpVotes,
-          downVotes: newDownVotes,
-        }),
-      });
+      if (answer) {
+        await fetch(`/api/question/${answer.questionId}/answer/${answer._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            upVotes: newUpVotes,
+            downVotes: newDownVotes,
+          }),
+        });
+      } else if (question) {
+        await fetch(`/api/question/update-question/${question._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            upVotes: newUpVotes,
+            downVotes: newDownVotes,
+          }),
+        });
+      }
     } catch (err) {
       console.log("Error updating votes:", err);
     }
@@ -220,59 +225,57 @@ export function Bottom({
           </>
         )}
         {isAnswer ? (
-          <>
-            <Dialog>
-              <form action="">
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Reply />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[525px]">
-                  <DialogHeader>
-                    <DialogTitle>
-                      <h1 className="text-sm  text-gray-400 font-normal ">
-                        Reply to answer
-                      </h1>
-                    </DialogTitle>
-                    <DialogDescription>
+          <Dialog>
+            <form action="">
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Reply />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    <h1 className="text-sm text-gray-400 font-normal">
+                      Reply to answer
+                    </h1>
+                  </DialogTitle>
+                  <DialogDescription>
+                    <p
+                      className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
+                        !showMore && "line-clamp-3"
+                      }`}
+                    >
+                      {answer?.text}
+                    </p>
+                    {answer?.text && answer?.text.length > 100 && (
                       <p
-                        className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
-                          !showMore && "line-clamp-3"
-                        }`}
+                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
+                        onClick={() => setShowMore(!showMore)}
                       >
-                        {answer?.text}
+                        {showMore ? "Show less" : "Show more"}
                       </p>
-                      {answer?.text && answer?.text.length > 100 && (
-                        <p
-                          className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
-                          onClick={() => setShowMore(!showMore)}
-                        >
-                          {showMore ? "Show less" : "Show more"}
-                        </p>
-                      )}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4">
-                    <div className="grid gap-3">
-                      <Textarea
-                        id="reply"
-                        name="reply"
-                        className="w-full"
-                        rows={6}
-                      />
-                    </div>
+                    )}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4">
+                  <div className="grid gap-3">
+                    <Textarea
+                      id="reply"
+                      name="reply"
+                      className="w-full"
+                      rows={6}
+                    />
                   </div>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button type="submit">Reply</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </form>
-            </Dialog>
-          </>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Reply</Button>
+                </DialogFooter>
+              </DialogContent>
+            </form>
+          </Dialog>
         ) : !isReading ? (
           <Button
             variant="outline"
