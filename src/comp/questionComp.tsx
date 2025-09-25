@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
+import { User } from "better-auth";
 
-// ------------------ TOP -------------------
 export function Top({
   question,
   answer,
@@ -30,7 +30,7 @@ export function Top({
   question?: IQuestion;
   answer?: Answer;
 }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
 
   const asker = question?.asker || (answer && answer.respondent);
@@ -77,8 +77,8 @@ export function Top({
         </p>
       </div>
       <div className="text-sm text-gray-500">
-        {answer?.createdAt.toString().slice(0, 10) ||
-          question?.createdAt.toString().slice(0, 10)}
+        {answer?.createdAt?.toString?.().slice(0, 10) ||
+          question?.createdAt?.toString?.().slice(0, 10)}
       </div>
     </div>
   );
@@ -87,10 +87,14 @@ export function Top({
 export function Bottom({
   isAnswer,
   isReading,
+  setAnswers,
+  answers,
   question,
   answer,
 }: {
   isAnswer?: boolean;
+  setAnswers?: React.Dispatch<React.SetStateAction<Answer[]>>;
+  answers?: Answer[];
   isReading?: boolean;
   question?: IQuestion;
   answer?: Answer;
@@ -100,10 +104,10 @@ export function Bottom({
   const [showMore, setShowMore] = useState(false);
 
   const [upVotes, setUpVotes] = useState<string[]>(
-    question?.upVotes || answer?.upVotes || []
+    (question?.upVotes as string[]) || (answer?.upVotes as string[]) || []
   );
   const [downVotes, setDownVotes] = useState<string[]>(
-    question?.downVotes || answer?.downVotes || []
+    (question?.downVotes as string[]) || (answer?.downVotes as string[]) || []
   );
 
   // 👇 update API route based on question/answer
@@ -185,6 +189,48 @@ export function Bottom({
     }
   };
 
+  const [open, setOpen] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
+  const handleReply = async (replyTextParam: string) => {
+    if (!replyTextParam.trim()) return;
+
+    const newAnswerObj: Answer = {
+      text: replyTextParam,
+      respondent: session?.user.id,
+      upVotes: [],
+      downVotes: [],
+      isReply: true,
+      repliedTo: answer?._id,
+      replies: 0,
+      questionId: answer?.questionId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    try {
+      const res = await fetch(
+        `/api/question/update-question/${answer?.questionId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            answers: [...answers, newAnswerObj],
+          }),
+        }
+      );
+
+      if (res.ok) {
+        setReplyText("");
+        setOpen(false);
+        setAnswers([...answers, newAnswerObj]);
+      } else {
+        console.error("Failed to add answer");
+      }
+    } catch (error) {
+      console.error("Error adding answer:", error);
+    }
+  };
   return (
     <div className="pt-2 flex items-center justify-between">
       <div className="flex text-gray-500 items-center gap-2">
@@ -225,47 +271,53 @@ export function Bottom({
           </>
         )}
         {isAnswer ? (
-          <Dialog>
-            <form action="">
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Reply />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[525px]">
-                <DialogHeader>
-                  <DialogTitle>
-                    <h1 className="text-sm text-gray-400 font-normal">
-                      Reply to answer
-                    </h1>
-                  </DialogTitle>
-                  <DialogDescription>
-                    <p
-                      className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
-                        !showMore && "line-clamp-3"
-                      }`}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Reply />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-[525px]">
+              <DialogHeader>
+                <DialogTitle className="text-sm text-gray-400 font-normal">
+                  Reply to answer
+                </DialogTitle>
+                <DialogDescription
+                  className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
+                    !showMore && "line-clamp-3"
+                  }`}
+                >
+                  {answer?.text}
+
+                  {answer?.text && answer?.text.length > 100 && (
+                    <span
+                      className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
+                      onClick={() => setShowMore(!showMore)}
                     >
-                      {answer?.text}
-                    </p>
-                    {answer?.text && answer?.text.length > 100 && (
-                      <p
-                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
-                        onClick={() => setShowMore(!showMore)}
-                      >
-                        {showMore ? "Show less" : "Show more"}
-                      </p>
-                    )}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4">
-                  <div className="grid gap-3">
-                    <Textarea
-                      id="reply"
-                      name="reply"
-                      className="w-full"
-                      rows={6}
-                    />
-                  </div>
+                      {showMore ? "Show less" : "Show more"}
+                    </span>
+                  )}
+                </DialogDescription>
+              </DialogHeader>
+
+              {/* ✅ form is now inside dialog content */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleReply(replyText);
+                }}
+                className="grid gap-4"
+              >
+                <div className="grid gap-3">
+                  <Textarea
+                    id="reply"
+                    name="reply"
+                    className="w-full"
+                    rows={6}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                  />
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
@@ -273,8 +325,8 @@ export function Bottom({
                   </DialogClose>
                   <Button type="submit">Reply</Button>
                 </DialogFooter>
-              </DialogContent>
-            </form>
+              </form>
+            </DialogContent>
           </Dialog>
         ) : !isReading ? (
           <Button

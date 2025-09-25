@@ -130,11 +130,7 @@ export default function QuestionPage() {
             <DialogContent className="sm:max-w-[525px]">
               <DialogHeader>
                 <DialogTitle className="text-sm text-gray-400 font-normal">
-                  Answer to{" "}
-                  <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
-                    username
-                  </span>
-                  &apos;s question
+                  Answer
                 </DialogTitle>
                 <DialogDescription className="text-lg font-semibold line-clamp-3 text-gray-500">
                   {data?.title}
@@ -180,7 +176,12 @@ export default function QuestionPage() {
               read {showMore ? "less" : "more"}
             </p>
             <div className="py-2 border-t border-gray-700 mt-5">
-              <Bottom isReading question={data} />
+              <Bottom
+                isReading
+                question={data}
+                answers={answers}
+                setAnswers={setAnswers}
+              />
             </div>
           </div>
 
@@ -191,9 +192,19 @@ export default function QuestionPage() {
                 No answers yet. Be the first to answer!
               </p>
             )}
-            {answers.map((answer, idx) => (
-              <AnswerComp key={idx} answer={answer} isReply={answer.isReply} />
-            ))}
+            {answers.map((answer, idx) => {
+              const isReply = answer.repliedTo;
+              return (
+                <AnswerComp
+                  key={idx}
+                  answer={answer}
+                  question={data}
+                  isReply={isReply}
+                  setAnswers={setAnswers}
+                  answers={answers}
+                />
+              );
+            })}
           </div>
         </div>
       ) : (
