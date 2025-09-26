@@ -6,9 +6,9 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  context: { params: { questionId: string; answerId: string } }
+  context: { params: Promise<{ questionId: string; answerId: string }> }
 ) {
-  const { questionId, answerId } = context.params;
+  const { questionId, answerId } = await context.params;
 
   try {
     await dbConnect();
