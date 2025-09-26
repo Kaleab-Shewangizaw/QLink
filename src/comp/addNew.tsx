@@ -54,7 +54,9 @@ export default function AddNew() {
         if (res.ok) {
           res.json().then((data) => {
             setLink(
-              `${window.location.origin}/link/${data.link._id}/${data.link.name}`
+              `${window.location.origin}/link/${
+                data.link._id
+              }/${data.link.name.replace(/ /g, "%20")}`
             );
             setCreated(true);
             setLoading(false);
@@ -114,7 +116,7 @@ export default function AddNew() {
                       Link created successfully! now you can copy and share it
                       with others.
                     </p>
-                    <div className="flex items-center justify-between w-[100%] max-w-[100%] rounded-md border bg-muted px-3 py-2 text-sm">
+                    <div className="flex items-center justify-between w-[100%] max-w-[525px] rounded-md border bg-muted px-3 py-2 text-sm">
                       <span className="truncate ">{link}</span>
                       <Button
                         variant="ghost"

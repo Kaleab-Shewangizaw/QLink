@@ -4,11 +4,13 @@ import Link from "next/link";
 
 export default function AnswerComp({
   question,
+  quest,
   answer,
   setAnswers,
   answers,
   isReply,
 }: {
+  quest?: Answer;
   question?: IQuestion;
   answer: Answer;
   setAnswers?: React.Dispatch<React.SetStateAction<Answer[]>>;
@@ -36,19 +38,20 @@ export default function AnswerComp({
           </div>
         </div>
       )}
-      <Top answer={answer} />
+      <Top answer={answer} quest={quest} />
       <div
         className="mt-2 dark:text-gray-400 text-sm text-gray-600"
         style={{ scrollMarginTop: "200px" }}
-        id={answer._id}
+        id={answer?._id}
       >
-        {answer.text}
+        {answer?.text || quest?.text}
       </div>
       <Bottom
         isAnswer
         answer={answer}
         setAnswers={setAnswers}
         answers={answers}
+        quest={quest}
       />
     </div>
   );

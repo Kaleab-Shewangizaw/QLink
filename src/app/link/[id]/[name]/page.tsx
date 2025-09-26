@@ -3,6 +3,7 @@
 import { authClient } from "@/app/lib/auth-client";
 import { Top } from "@/comp/questionComp";
 import { Button } from "@/components/ui/button";
+
 import {
   Dialog,
   DialogClose,
@@ -13,8 +14,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
 import { Textarea } from "@/components/ui/textarea";
 import { ILink } from "@/lib/models/LinkModel";
+import { Answer } from "@/lib/models/qModels";
 import { ArrowLeft, TrashIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -41,6 +44,10 @@ export default function LinkPage() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ILink | null>(null);
   const [error, setError] = useState(false);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [questions, setQuestions] = useState([]);
+  const [open, setOpen] = useState(false);
+
   const params = useParams();
   const linkId = params.id as string;
   useEffect(() => {
@@ -48,6 +55,8 @@ export default function LinkPage() {
       try {
         const linkData = await fetchLink(linkId);
         setData(linkData.link);
+        setQuestions(linkData.link.questions || []);
+        console.log("fetched link data:", linkData);
         if (!linkData.link.isOpen) {
           setError(true);
         }
@@ -58,6 +67,8 @@ export default function LinkPage() {
     };
     if (linkId) getLink();
   }, [linkId]);
+
+  console.log("link data:", data);
 
   const handleDelete = async (id: string | undefined) => {
     setLoading(true);
@@ -78,11 +89,48 @@ export default function LinkPage() {
     }
   };
 
+  const handleAddQuestion = async () => {
+    if (!session?.user) return;
+    if (!newQuestion.trim()) return;
+
+    const newQuestionObj: Answer = {
+      text: newQuestion,
+      respondent: userId,
+      upVotes: [],
+      downVotes: [],
+      questionId: data?._id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    try {
+      const res = await fetch(`/api/link/update-link/${data?._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: newQuestionObj,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setQuestions(data.link.questions || []);
+
+        setNewQuestion("");
+        setOpen(false);
+      } else {
+        console.error("Failed to add question");
+      }
+    } catch (error) {
+      console.error("Error adding answer:", error);
+    }
+  };
+
   const router = useRouter();
 
   return (
     <div className="p-2">
-      <div className="sticky top-13 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0 text-gray-500 flex items-center justify-between">
+      <div className="sticky top-12 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0 text-gray-500 flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className="hover:text-gray-300 cursor-pointer flex items-center gap-1"
@@ -107,46 +155,42 @@ export default function LinkPage() {
               </Button>
             </>
           )}
-          <Dialog>
-            <form action="">
-              <DialogTrigger asChild>
-                {data?.isOpen && (
-                  <Button variant="outline" disabled={loading}>
-                    Ask
-                  </Button>
-                )}
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[525px]">
-                <DialogHeader>
-                  <DialogTitle className="text-sm text-gray-400 font-normal">
-                    write your quetions to{" "}
-                    <span className="font-semibold dark:text-gray-200 text-gray-600 cursor-pointer hover:underline">
-                      username
-                    </span>
-                    down below.
-                  </DialogTitle>
-                  <DialogDescription className="text-lg font-semibold line-clamp-3 text-gray-500">
-                    {data?.name}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4">
-                  <div className="grid gap-3">
-                    <Textarea
-                      id="answer"
-                      name="answer"
-                      className="w-full"
-                      rows={10}
-                    />
-                  </div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              {data?.isOpen && (
+                <Button variant="outline" disabled={loading}>
+                  Ask
+                </Button>
+              )}
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+              <DialogHeader>
+                <DialogTitle className="text-sm text-gray-400 font-normal">
+                  write your question down below.
+                </DialogTitle>
+                <DialogDescription className="text-lg font-semibold line-clamp-3 text-gray-500">
+                  {data?.name}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <Textarea
+                    id="answer"
+                    name="answer"
+                    className="w-full"
+                    rows={10}
+                    value={newQuestion}
+                    onChange={(e) => setNewQuestion(e.target.value)}
+                  />
                 </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit">Answer</Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={handleAddQuestion}>Ask</Button>
+              </DialogFooter>
+            </DialogContent>
           </Dialog>
         </div>
       </div>
@@ -157,11 +201,21 @@ export default function LinkPage() {
       ) : (
         <>
           <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
-            <Top />
+            <Top link={data} />
             <div className="p-2 py-4 text">{data?.name}</div>
           </div>
         </>
       )}
+      <div className="w-full border my-5" />
+
+      {questions.map((question) => (
+        <div key={question._id} className="w-full">
+          <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900 mt-4">
+            <Top quest={question} />
+            <div className="p-2 py-4 text">{question.text}</div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -7,6 +7,7 @@ export interface Answer {
   upVotes: string[];
   downVotes: string[];
   isReply: boolean;
+  isAnonymous: boolean;
   replies: number;
   questionId: string;
   repliedTo?: string;

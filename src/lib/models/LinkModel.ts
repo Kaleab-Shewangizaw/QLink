@@ -24,32 +24,23 @@ const linkSchema: Schema = new Schema(
           type: String,
           required: true,
         },
-        respondant: {
+        isAnonymous: { type: Boolean, default: false },
+        respondent: {
           type: String,
         },
-        replies: [
+        replies: { type: Number, default: 0 },
+        upVotes: [
           {
-            text: {
-              type: String,
-              required: true,
-            },
-            respondant: {
-              type: String,
-            },
-            createdAt: {
-              type: Date,
-              default: Date.now,
-            },
-            updatedAt: {
-              type: Date,
-              default: Date.now,
-            },
+            type: Schema.Types.ObjectId,
+            ref: "User",
           },
         ],
-        likes: {
-          type: Number,
-          default: 0,
-        },
+        downVotes: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
         questionId: {
           type: Schema.Types.ObjectId,
           ref: "Question",

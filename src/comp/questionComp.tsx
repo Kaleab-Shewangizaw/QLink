@@ -22,18 +22,27 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
 import { User } from "better-auth";
+import { ILink } from "@/lib/models/LinkModel";
 
 export function Top({
+  quest,
+  link,
   question,
   answer,
 }: {
+  quest?: Answer;
+  link?: ILink;
   question?: IQuestion;
   answer?: Answer;
 }) {
   const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
 
-  const asker = question?.asker || (answer && answer.respondent);
+  const asker =
+    question?.asker ||
+    (answer && answer.respondent) ||
+    link?.owner ||
+    quest?.respondent;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -53,14 +62,20 @@ export function Top({
     fetchUser();
   }, [asker]);
 
-  const isAnonymous = question?.isAnonymous;
+  const isAnonymous = question?.isAnonymous || quest?.isAnonymous || false;
 
   return (
     <div className="w-full flex justify-between items-center">
       <div className="flex items-center text-gray-500 gap-2 hover:text-gray-200 cursor-pointer">
         <Avatar>
           <AvatarImage
-            src={isAnonymous ? "" : user?.image || "/profilePicture2.png"}
+            src={
+              isAnonymous
+                ? ""
+                : quest
+                ? "/asker.png"
+                : user?.image || "/profilePicture2.png"
+            }
             alt="user"
           />
           <AvatarFallback>?</AvatarFallback>
@@ -69,10 +84,10 @@ export function Top({
         <p className=" text-sm flex items-center">
           <Link href="">
             {session?.user.id === asker && isAnonymous
-              ? `Anonymous/${user?.name || "name"}`
+              ? `Anonymous/${user?.name || "Loading..."}`
               : isAnonymous
               ? "Anonymous"
-              : user?.name || "name"}
+              : user?.name || "Asker"}
           </Link>
         </p>
       </div>
@@ -85,6 +100,7 @@ export function Top({
 }
 
 export function Bottom({
+  quest,
   isAnswer,
   isReading,
   setAnswers,
@@ -92,6 +108,7 @@ export function Bottom({
   question,
   answer,
 }: {
+  quest?: Answer;
   isAnswer?: boolean;
   setAnswers?: React.Dispatch<React.SetStateAction<Answer[]>>;
   answers?: Answer[];
@@ -104,10 +121,16 @@ export function Bottom({
   const [showMore, setShowMore] = useState(false);
 
   const [upVotes, setUpVotes] = useState<string[]>(
-    (question?.upVotes as string[]) || (answer?.upVotes as string[]) || []
+    (question?.upVotes as string[]) ||
+      (answer?.upVotes as string[]) ||
+      (quest?.upVotes as string[]) ||
+      []
   );
   const [downVotes, setDownVotes] = useState<string[]>(
-    (question?.downVotes as string[]) || (answer?.downVotes as string[]) || []
+    (question?.downVotes as string[]) ||
+      (answer?.downVotes as string[]) ||
+      (quest?.downVotes as string[]) ||
+      []
   );
 
   // 👇 update API route based on question/answer
@@ -134,6 +157,27 @@ export function Bottom({
             downVotes: newDownVotes,
           }),
         });
+      } else if (quest) {
+        try {
+          const res = await fetch(`/api/link/get-link/${quest.questionId}`);
+          const linkData = await res.json();
+
+          if (!linkData?.link) return;
+
+          const updatedQuestions = linkData.link.questions.map((q: Answer) =>
+            q._id === quest._id
+              ? { ...q, upVotes: newUpVotes, downVotes: newDownVotes }
+              : q
+          );
+
+          await fetch(`/api/link/update-link/${quest.questionId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ questions: updatedQuestions }),
+          });
+        } catch (err) {
+          console.log("Error updating quest votes:", err);
+        }
       }
     } catch (err) {
       console.log("Error updating votes:", err);
@@ -301,7 +345,6 @@ export function Bottom({
                 </DialogDescription>
               </DialogHeader>
 
-              {/* ✅ form is now inside dialog content */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
