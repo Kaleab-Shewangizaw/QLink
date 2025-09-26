@@ -19,8 +19,7 @@
     "better-auth": "^1.3.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "file:../../../../offline-npm-packages/framer-motion-12.23.5.tgz",
-    "lucide-react": "file:../../../../offline-npm-packages/lucide-react-0.525.0.tgz",
+    "lucide-react": "^0.544.0",
     "mongodb": "^6.20.0",
     "mongoose": "^8.18.2",
     "next": "15.3.5",
@@ -33,8 +32,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^13.0.0",
-    "vaul": "^1.1.2",
-    "zod": "file:../../../../offline-npm-packages/zod-4.0.5.tgz"
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
