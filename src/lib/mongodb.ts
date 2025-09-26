@@ -8,10 +8,10 @@ if (!MONGODB_URI) {
   );
 }
 
-let cached = (global as any).mongoose;
+let cached = (global as unknown).mongoose;
 
 if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+  cached = (global as unknown).mongoose = { conn: null, promise: null };
 }
 
 async function dbConnect() {

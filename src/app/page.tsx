@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import QuestionComp from "../comp/questionComp";
 import { QuestionSkeleton } from "../comp/questionSkeleton";
+import { IQuestion } from "@/lib/models/qModels";
 
 export default function Home() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<IQuestion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
