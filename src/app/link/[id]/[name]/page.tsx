@@ -28,7 +28,7 @@ export const LinkPageSkeleton = () => {
 
 export const dynamic = "force-dynamic";
 
-export async function fetchLink(id: string): Promise<ILink> {
+async function fetchLink(id: string): Promise<ILink> {
   const res = await fetch(`/api/link/get-link/${id}`, {
     cache: "no-store",
   });
