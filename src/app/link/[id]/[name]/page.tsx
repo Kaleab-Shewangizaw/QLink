@@ -22,10 +22,6 @@ import { ArrowLeft, TrashIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const LinkPageSkeleton = () => {
-  return <div>Loading...</div>;
-};
-
 export const dynamic = "force-dynamic";
 
 async function fetchLink(id: string): Promise<ILink> {
