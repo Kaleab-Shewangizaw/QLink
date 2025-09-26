@@ -8,7 +8,6 @@ export async function GET() {
   try {
     await dbConnect();
 
-    // Get headers once and reuse them
     const headersList = await headers();
     const session = await auth.api.getSession({ headers: headersList });
 
