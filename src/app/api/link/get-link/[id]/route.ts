@@ -3,9 +3,9 @@ import dbConnect from "@/lib/mongodb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params;
 
   if (!id) {
     return new Response(
