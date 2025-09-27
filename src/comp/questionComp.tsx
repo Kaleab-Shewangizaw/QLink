@@ -235,9 +235,13 @@ export function Bottom({
 
   const [open, setOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleReply = async (replyTextParam: string) => {
     if (!replyTextParam.trim()) return;
+    if (!session?.user?.id) return;
+    setLoading(true);
+    if (!setAnswers || !answers) return;
 
     const newAnswerObj: Answer = {
       text: replyTextParam,
@@ -268,6 +272,7 @@ export function Bottom({
         setReplyText("");
         setOpen(false);
         setAnswers([...answers, newAnswerObj]);
+        setLoading(false);
       } else {
         console.error("Failed to add answer");
       }
@@ -348,7 +353,9 @@ export function Bottom({
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
+
                   handleReply(replyText);
+                  setLoading(false);
                 }}
                 className="grid gap-4"
               >
@@ -366,7 +373,9 @@ export function Bottom({
                   <DialogClose asChild>
                     <Button variant="outline">Cancel</Button>
                   </DialogClose>
-                  <Button type="submit">Reply</Button>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? "..." : "Reply"}
+                  </Button>
                 </DialogFooter>
               </form>
             </DialogContent>

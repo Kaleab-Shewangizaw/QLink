@@ -29,7 +29,7 @@ export default function Home() {
     <div className="mt-5 px-2 pb-10 flex flex-col gap-4">
       {loading
         ? Array.from({ length: 4 }).map((_, i) => <QuestionSkeleton key={i} />)
-        : data.map((question) => (
+        : data?.map((question) => (
             <QuestionComp key={question._id} question={question} />
           ))}
     </div>

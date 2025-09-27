@@ -2,14 +2,15 @@ import { User } from "better-auth";
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface Answer {
+  _id?: string;
   text: string;
-  respondent: User | string;
+  respondent?: User | string;
   upVotes: string[];
   downVotes: string[];
   isReply: boolean;
-  isAnonymous: boolean;
+  isAnonymous?: boolean;
   replies: number;
-  questionId: string;
+  questionId: string | undefined;
   repliedTo?: string;
   createdAt: Date;
   updatedAt: Date;

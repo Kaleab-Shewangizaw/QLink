@@ -38,7 +38,7 @@ export default function LinkPage() {
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id;
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ILink | null>(null);
+  const [data, setData] = useState<unknown | null>(null);
   const [error, setError] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [questions, setQuestions] = useState([]);

@@ -51,8 +51,6 @@ export async function POST(req: Request) {
 
     const questionDoc = await Question.create(newQuestion);
 
-    await questionDoc.populate({ path: "asker", strictPopulate: false });
-
     return NextResponse.json(
       {
         success: true,

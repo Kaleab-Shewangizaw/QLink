@@ -17,7 +17,7 @@ export default function AnswerComp({
   answers?: Answer[];
   isReply?: boolean;
 }) {
-  let repliedAns: Answer = {};
+  let repliedAns: Answer | undefined;
 
   if (isReply) {
     repliedAns = question?.answers?.find((ans) => ans._id === answer.repliedTo);
@@ -32,8 +32,8 @@ export default function AnswerComp({
         <div className="absolute -top-10 p-2 dark:bg-[#0a0a0a] bg-[#ffffff] w-[90%] mx-auto border right-2">
           <Top answer={repliedAns} />
           <div className="mt-2 dark:text-gray-400 text-sm text-gray-600 line-clamp-1 ">
-            <Link href={`/question/${question?._id}/#${repliedAns._id}`}>
-              {repliedAns.text}
+            <Link href={`/question/${question?._id}/#${repliedAns?._id}`}>
+              {repliedAns?.text}
             </Link>
           </div>
         </div>

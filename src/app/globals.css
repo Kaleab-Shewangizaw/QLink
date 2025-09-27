@@ -128,3 +128,7 @@
 .removeScrollBar::-webkit-scrollbar-thumb {
   background-color: white;
 }
+
+html {
+  scroll-behavior: smooth;
+}
