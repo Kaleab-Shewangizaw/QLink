@@ -22,8 +22,6 @@ import { ArrowLeft, TrashIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const dynamic = "force-dynamic";
-
 async function fetchLink(id: string): Promise<ILink> {
   const res = await fetch(`/api/link/get-link/${id}`, {
     cache: "no-store",
@@ -38,10 +36,10 @@ export default function LinkPage() {
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id;
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<unknown | null>(null);
+  const [data, setData] = useState<ILink | null>(null);
   const [error, setError] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<Answer[]>([]);
   const [open, setOpen] = useState(false);
 
   const params = useParams();
@@ -50,10 +48,15 @@ export default function LinkPage() {
     const getLink = async () => {
       try {
         const linkData = await fetchLink(linkId);
-        setData(linkData.link);
-        setQuestions(linkData.link.questions || []);
+        const link = linkData.link;
+        if (!link) {
+          setError(true);
+          return;
+        }
+        setData(link);
+        setQuestions(link.questions || []);
         console.log("fetched link data:", linkData);
-        if (!linkData.link.isOpen) {
+        if (!link.isOpen) {
           setError(true);
         }
       } catch (error) {
