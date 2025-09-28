@@ -36,7 +36,7 @@ export default function LinkPage() {
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id;
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ILink | null>(null);
+  const [data, setData] = useState<ILink>();
   const [error, setError] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [questions, setQuestions] = useState<Answer[]>([]);
@@ -47,15 +47,15 @@ export default function LinkPage() {
   useEffect(() => {
     const getLink = async () => {
       try {
-        const linkData = await fetchLink(linkId);
-        const link = linkData.link;
+        const link = await fetchLink(linkId);
+
         if (!link) {
           setError(true);
           return;
         }
         setData(link);
         setQuestions(link.questions || []);
-        console.log("fetched link data:", linkData);
+        console.log("fetched link data:", link);
         if (!link.isOpen) {
           setError(true);
         }

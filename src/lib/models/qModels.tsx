@@ -10,7 +10,7 @@ export interface Answer {
   isReply: boolean;
   isAnonymous?: boolean;
   replies: number;
-  questionId: string | undefined;
+  questionId: string;
   repliedTo?: string;
   createdAt: Date;
   updatedAt: Date;

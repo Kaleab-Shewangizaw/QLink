@@ -8,6 +8,7 @@ export interface ILink extends Document {
   isOpen: boolean;
   createdAt: Date;
   updatedAt: Date;
+  _id: string;
 }
 
 const linkSchema: Schema = new Schema(
