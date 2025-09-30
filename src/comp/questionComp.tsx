@@ -251,7 +251,7 @@ export function Bottom({
       isReply: true,
       repliedTo: answer?._id,
       replies: 0,
-      questionId: answer?.questionId,
+      questionId: answer?.questionId as string,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -285,7 +285,7 @@ export function Bottom({
       <div className="flex text-gray-500 items-center gap-2">
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            upVotes.includes(session?.user.id)
+            upVotes.includes(session?.user.id as string)
               ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
               : ""
           }`}
@@ -297,7 +297,7 @@ export function Bottom({
 
         <div
           className={`flex gap-1 cursor-pointer rounded-md p-1 px-1.5 ${
-            downVotes.includes(session?.user.id)
+            downVotes.includes(session?.user.id as string)
               ? "bg-gray-800 text-gray-300 not-dark:bg-gray-400 not-dark:text-gray-700"
               : ""
           }`}

@@ -12,7 +12,7 @@ export default function LinkComp({ link }: { link: ILink }) {
 
   const handleClose = async () => {
     try {
-      const newState = !isClosed; // compute new state
+      const newState = !isClosed;
       setIsClosed(newState);
 
       await fetch(`/api/link/update-link/${link._id}`, {

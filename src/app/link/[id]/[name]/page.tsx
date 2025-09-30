@@ -47,16 +47,16 @@ export default function LinkPage() {
   useEffect(() => {
     const getLink = async () => {
       try {
-        const link = await fetchLink(linkId);
+        const linkData = await fetchLink(linkId);
 
-        if (!link) {
+        if (!linkData) {
           setError(true);
           return;
         }
-        setData(link);
-        setQuestions(link.questions || []);
-        console.log("fetched link data:", link);
-        if (!link.isOpen) {
+        setData(linkData.link);
+        setQuestions(linkData.link.questions || []);
+        console.log("fetched link data:", linkData);
+        if (!linkData.link.isOpen) {
           setError(true);
         }
       } catch (error) {
