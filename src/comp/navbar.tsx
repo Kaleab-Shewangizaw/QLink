@@ -76,7 +76,7 @@ export default function Navbar() {
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => console.log("Settings clicked")}>
+              <DropdownMenuItem onClick={() => router.push("/settings")}>
                 <Settings /> Settings
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="text-red-500">
