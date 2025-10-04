@@ -2,9 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -13,13 +15,50 @@ export default function NewQuestion() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setImages((prev) => [...prev, ...newFiles]);
+      newFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews((prev) => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  async function convertImagesToBase64(files: File[]): Promise<string[]> {
+    return Promise.all(
+      files.map(
+        (file) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          })
+      )
+    );
+  }
 
   const router = useRouter();
+
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
+      const imagesBase64 = await convertImagesToBase64(images);
       const res = await fetch("/api/question/add-question", {
         method: "POST",
         headers: {
@@ -29,6 +68,7 @@ export default function NewQuestion() {
           title,
           description,
           isAnonymous,
+          images: imagesBase64,
         }),
       });
 
@@ -56,6 +96,36 @@ export default function NewQuestion() {
       <div className="border border-gray-700 rounded-md p-4 text-center">
         <form onSubmit={handleSubmit}>
           <h1 className="text-lg font-semibold">New Question</h1>
+          <div className="flex items-end gap-4 flex-wrap">
+            {imagePreviews.map((preview, idx) => (
+              <div
+                key={idx}
+                className="relative w-34 h-34 rounded-sm overflow-hidden"
+              >
+                <Image
+                  src={preview}
+                  alt={`Preview ${idx + 1}`}
+                  layout="fill"
+                  objectFit="cover"
+                />
+                <X
+                  className="absolute top-0 right-0 cursor-pointer bg-black bg-opacity-50 rounded-full"
+                  onClick={() => handleRemoveImage(idx)}
+                  size={18}
+                />
+              </div>
+            ))}
+            <div className="flex items-center gap-2 w-full">
+              <Input
+                id="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                className="w-fit"
+              />
+            </div>
+          </div>
           <div className="grid gap-4 py-5">
             <div className="grid gap-2">
               <Label className="mt-4">
