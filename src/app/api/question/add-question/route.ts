@@ -8,6 +8,7 @@ import { Question } from "@/lib/models/qModels";
 interface AddQuestionRequest {
   title: string;
   description?: string;
+  images?: string[];
   isAnonymous: boolean;
 }
 
@@ -16,6 +17,7 @@ export async function POST(req: Request) {
     const {
       title,
       description = "",
+      images = [],
       isAnonymous,
     }: AddQuestionRequest = await req.json();
 
@@ -44,6 +46,7 @@ export async function POST(req: Request) {
       createdAt: new Date(),
       updatedAt: new Date(),
       isAnonymous,
+      images,
       likes: 0,
       views: 0,
       answers: [],

@@ -7,6 +7,7 @@ export interface Answer {
   respondent?: User | string;
   upVotes: string[];
   downVotes: string[];
+  images: string[];
   isReply: boolean;
   isAnonymous?: boolean;
   replies: number;
@@ -24,6 +25,7 @@ export interface IQuestion extends Document {
   asker: User | string;
   upVotes: string[];
   downVotes: string[];
+  images: string[];
   answers?: Answer[];
   views: number;
   createdAt: Date;
@@ -57,6 +59,11 @@ const QuestionSchema: Schema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    images: [
+      {
+        type: String,
       },
     ],
 

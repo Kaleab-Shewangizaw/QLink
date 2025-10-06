@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
 import { User } from "better-auth";
 import { ILink } from "@/lib/models/LinkModel";
+import Image from "next/image";
 
 export function Top({
   quest,
@@ -401,6 +402,12 @@ export default function QuestionComp({ question }: { question?: IQuestion }) {
   return (
     <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
       <Top question={question} />
+      <div>
+        {question?.images?.length > 0 &&
+          question?.images?.map((image: string) => (
+            <Image src={image} key={image} alt="image" />
+          ))}
+      </div>
       <div className="p-2">{question?.title}</div>
       <Bottom question={question} />
     </div>
