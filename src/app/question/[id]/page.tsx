@@ -18,6 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
 import { ArrowLeft, TrashIcon } from "lucide-react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -175,6 +176,22 @@ export default function QuestionPage() {
             >
               read {showMore ? "less" : "more"}
             </p>
+            <div className=" mx-3 flex justify-center flex-wrap gap-2">
+              {data?.images?.length > 0 &&
+                data?.images?.map((image: string) => (
+                  <div
+                    className="relative flex-1 rounded-md overflow-hidden w-full h-80"
+                    key={image}
+                  >
+                    <Image
+                      src={image}
+                      fill
+                      className="object-cover"
+                      alt="image"
+                    />
+                  </div>
+                ))}
+            </div>
             <div className="py-2 border-t border-gray-700 mt-5">
               <Bottom
                 isReading

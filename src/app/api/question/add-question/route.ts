@@ -21,6 +21,8 @@ export async function POST(req: Request) {
       isAnonymous,
     }: AddQuestionRequest = await req.json();
 
+    console.log("Received images:", images);
+
     if (title.trim().length === 0) {
       return NextResponse.json(
         { message: "Question title must be a non-empty string" },
@@ -47,10 +49,11 @@ export async function POST(req: Request) {
       updatedAt: new Date(),
       isAnonymous,
       images,
-      likes: 0,
       views: 0,
       answers: [],
     };
+
+    console.log("newQuestion object:", newQuestion);
 
     const questionDoc = await Question.create(newQuestion);
 

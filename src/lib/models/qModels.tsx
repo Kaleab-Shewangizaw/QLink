@@ -61,11 +61,10 @@ const QuestionSchema: Schema = new Schema(
         ref: "User",
       },
     ],
-    images: [
-      {
-        type: String,
-      },
-    ],
+    images: {
+      type: [String],
+      default: [],
+    },
 
     asker: {
       type: Schema.Types.ObjectId,
