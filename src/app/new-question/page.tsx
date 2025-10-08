@@ -58,7 +58,7 @@ export default function NewQuestion() {
     e.preventDefault();
     setLoading(true);
     try {
-      const imagesBase64 = await convertImagesToBase64(images);
+      const imagesBase64 = await convertImagesToBase64(images.slice(0, 4));
       const res = await fetch("/api/question/add-question", {
         method: "POST",
         headers: {
@@ -116,13 +116,15 @@ export default function NewQuestion() {
               </div>
             ))}
             <div className="flex items-center gap-2 w-full">
-              <Label
-                htmlFor="images"
-                className="w-fit flex text-gray-400 hover:text-gray-200 cursor-pointer ml-auto border p-2 rounded-md"
-              >
-                <ImageIcon />
-                add images
-              </Label>
+              {images.length < 4 && (
+                <Label
+                  htmlFor="images"
+                  className="w-fit flex text-gray-400 hover:text-gray-200 cursor-pointer ml-auto border p-2 rounded-md"
+                >
+                  <ImageIcon />
+                  add images
+                </Label>
+              )}
               <Input
                 id="images"
                 type="file"

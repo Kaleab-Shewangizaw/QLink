@@ -403,14 +403,16 @@ export default function QuestionComp({ question }: { question?: IQuestion }) {
     <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
       <Top question={question} />
       <div className="p-2">{question?.title}</div>
-      <div className=" mx-3 flex justify-center flex-wrap gap-2">
+      <div className=" sm:mx-10 flex justify-center flex-wrap gap-2 my-2">
         {question?.images?.length > 0 &&
           question?.images?.map((image: string) => (
             <div
-              className="relative flex-1 rounded-md overflow-hidden w-[50%] h-80"
+              className={`relative flex-1 rounded-md   overflow-hidden min-w-[40%] w-[50%] flex-wrap  ${
+                question.images.length === 1 ? "h-100" : "h-65"
+              }`}
               key={image}
             >
-              <Image src={image} fill className="object-cover" alt="image" />
+              <Image src={image} fill className="object-cover " alt="image" />
             </div>
           ))}
       </div>
