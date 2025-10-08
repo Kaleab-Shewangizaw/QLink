@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, ImageIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -116,13 +116,20 @@ export default function NewQuestion() {
               </div>
             ))}
             <div className="flex items-center gap-2 w-full">
+              <Label
+                htmlFor="images"
+                className="w-fit flex text-gray-400 hover:text-gray-200 cursor-pointer ml-auto border p-2 rounded-md"
+              >
+                <ImageIcon />
+                add images
+              </Label>
               <Input
                 id="images"
                 type="file"
                 accept="image/*"
                 multiple
                 onChange={handleImageChange}
-                className="w-fit"
+                className="hidden"
               />
             </div>
           </div>

@@ -407,7 +407,7 @@ export default function QuestionComp({ question }: { question?: IQuestion }) {
         {question?.images?.length > 0 &&
           question?.images?.map((image: string) => (
             <div
-              className="relative flex-1 rounded-md overflow-hidden w-full h-80"
+              className="relative flex-1 rounded-md overflow-hidden w-[50%] h-80"
               key={image}
             >
               <Image src={image} fill className="object-cover" alt="image" />
