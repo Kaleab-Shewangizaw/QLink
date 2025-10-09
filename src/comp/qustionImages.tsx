@@ -43,13 +43,13 @@ export default function QuestionImages({ images }: { images: string[] }) {
                 opts={{
                   startIndex: selectedIndex,
                 }}
-                className="w-full max-w-[95vw] md:max-w-[80vw]"
+                className="w-full max-w-[95vw] md:max-w-[80vw]  backdrop-blur-2xl bg-gray-800/30  h-[100vh] "
               >
                 <CarouselContent>
                   {images.map((img, i) => (
                     <CarouselItem
                       key={i}
-                      className="flex justify-center items-center"
+                      className="flex justify-center items-center mt-[35%] sm:mt-[7%] "
                     >
                       <div className="relative w-full h-[60vh] md:h-[80vh] rounded-md ">
                         <Image
