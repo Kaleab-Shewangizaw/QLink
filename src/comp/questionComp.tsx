@@ -89,7 +89,9 @@ export function Top({
               ? `Anonymous/${user?.name || "Loading..."}`
               : isAnonymous
               ? "Anonymous"
-              : user?.name || "Asker"}
+              : quest
+              ? "Asker"
+              : user?.name || "Loading..."}
           </Link>
         </p>
       </div>
