@@ -6,7 +6,7 @@ export interface Answer {
   respondent?: Asker;
   upVotes: string[];
   downVotes: string[];
-  images: string[];
+  images?: string[];
   isReply: boolean;
   isAnonymous?: boolean;
   replies: number;
@@ -24,11 +24,11 @@ export interface Asker {
 }
 
 export interface IQuestion extends Document {
-  id: string;
+  _id: string;
   title: string;
   isAnonymous: boolean;
   description?: string;
-  asker: Asker | string;
+  asker: Asker;
   upVotes: string[];
   downVotes: string[];
   images: string[];

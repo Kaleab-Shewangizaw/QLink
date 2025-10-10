@@ -9,7 +9,6 @@ import { ArrowLeft, ImageIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { BsShift } from "react-icons/bs";
 
 export default function NewQuestion() {
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -55,7 +54,11 @@ export default function NewQuestion() {
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e:
+      | React.FormEvent<HTMLFormElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -150,6 +153,17 @@ export default function NewQuestion() {
                 rows={3}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                placeholder="What is your question?"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.shiftKey) {
+                    handleSubmit(e);
+                  } else if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    const descriptionElement =
+                      document.getElementById("description");
+                    descriptionElement?.focus();
+                  }
+                }}
               />
             </div>
             <div className="grid gap-2">
@@ -165,6 +179,17 @@ export default function NewQuestion() {
                 rows={10}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                id="description"
+                onKeyDown={(e) => {
+                  //if enter only is pressed, submit the form
+                  //if shift + enter is pressed, add a new line
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    handleSubmit(e);
+                  } else if (e.key === "Enter" && e.shiftKey) {
+                    e.preventDefault();
+                    setDescription((prev) => prev + "\n");
+                  }
+                }}
               />
             </div>
           </div>
@@ -188,7 +213,7 @@ export default function NewQuestion() {
               <Button variant="outline" type="submit" disabled={loading}>
                 {loading ? "Submitting..." : "Submit"}
                 <span className="ml-3 text-sm text-gray-400 flex items-center justify-center">
-                  ( <BsShift /> + Enter ){" "}
+                  (Enter){" "}
                 </span>
               </Button>
             </div>

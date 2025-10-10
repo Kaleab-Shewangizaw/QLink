@@ -19,7 +19,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
 import { ArrowLeft, TrashIcon } from "lucide-react";
-import Image from "next/image";
+
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -71,7 +71,6 @@ export default function QuestionPage() {
 
     const newAnswerObj: Answer = {
       text: newAnswer,
-      respondent: userId,
       upVotes: [],
       downVotes: [],
       isReply: false,
@@ -113,7 +112,7 @@ export default function QuestionPage() {
           <ArrowLeft /> Back
         </button>
         <div className="flex items-center gap-2">
-          {userId === data?.asker && (
+          {userId === data?.asker.id && (
             <Button
               variant={"outline"}
               className="text-red-400"

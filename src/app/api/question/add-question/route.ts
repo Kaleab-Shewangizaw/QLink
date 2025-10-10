@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const newQuestion = {
       id: uuidv4(),
       title: title.trim(),
-      description: description?.toString() || "",
+      description: description?.toString().trim() || "",
       asker: {
         id: isAnonymous ? "" : session.user.id,
         name: session.user.name || "Anonymous",
