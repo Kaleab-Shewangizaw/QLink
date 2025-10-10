@@ -165,7 +165,7 @@ export default function QuestionPage() {
             <Top question={data} />
             <h1 className="text-lg font-semibold">{data.title}</h1>
             <p
-              className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
+              className={`text-gray-600 dark:text-gray-400 whitespace-pre-line text-sm mt-1 ${
                 !showMore && "line-clamp-3"
               }`}
             >
@@ -189,14 +189,17 @@ export default function QuestionPage() {
           </div>
 
           <div className="rounded-t-none border border-gray-700 rounded-md p-3">
-            <h2 className="text-lg font-semibold mb-2">Answers</h2>
-            {answers.length === 0 && (
-              <p className="text-gray-500">
-                No answers yet. Be the first to answer!
-              </p>
-            )}
+            <h2 className="text-lg font-semibold mb-2 flex gap-3 items-center">
+              Answers{" "}
+              {answers.length === 0 && (
+                <p className="text-gray-500 text-sm font-normal">
+                  (No answers yet. Be the first to answer!)
+                </p>
+              )}
+            </h2>
+
             {answers.map((answer, idx) => {
-              const isReply = answer.repliedTo;
+              const isReply = (answer?.repliedTo?.length ?? 0) > 0;
               return (
                 <AnswerComp
                   key={idx}

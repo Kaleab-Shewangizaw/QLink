@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Answer, IQuestion } from "@/lib/models/qModels";
+import { Answer, Asker, IQuestion } from "@/lib/models/qModels";
 import { User } from "better-auth";
 import { ILink } from "@/lib/models/LinkModel";
 import Image from "next/image";
@@ -37,32 +37,32 @@ export function Top({
   question?: IQuestion;
   answer?: Answer;
 }) {
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
 
-  const asker =
+  const asker: Asker =
     question?.asker ||
     (answer && answer.respondent) ||
     link?.owner ||
     quest?.respondent;
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (!asker) return;
-      try {
-        const res = await fetch(`/api/user/get-user/${asker}`);
-        if (res.ok) {
-          const userData = await res.json();
-          setUser(userData);
-        } else {
-          console.error("Failed to fetch user data");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchUser();
-  }, [asker]);
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     if (!asker) return;
+  //     try {
+  //       const res = await fetch(`/api/user/get-user/${asker}`);
+  //       if (res.ok) {
+  //         const userData = await res.json();
+  //         setUser(userData);
+  //       } else {
+  //         console.error("Failed to fetch user data");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   };
+  //   fetchUser();
+  // }, [asker]);
 
   const isAnonymous = question?.isAnonymous || quest?.isAnonymous || false;
 
@@ -76,7 +76,7 @@ export function Top({
                 ? ""
                 : quest
                 ? "/asker.png"
-                : user?.image || "/profilePicture2.png"
+                : asker?.image || "/profilePicture2.png"
             }
             alt="user"
           />
@@ -85,13 +85,13 @@ export function Top({
 
         <p className=" text-sm flex items-center">
           <Link href="">
-            {session?.user.id === asker && isAnonymous
-              ? `Anonymous/${user?.name || "Loading..."}`
+            {session?.user.id === asker.id && isAnonymous
+              ? `Anonymous/${asker?.name || "Loading..."}`
               : isAnonymous
               ? "Anonymous"
               : quest
               ? "Asker"
-              : user?.name || "Loading..."}
+              : asker?.name || "Loading..."}
           </Link>
         </p>
       </div>

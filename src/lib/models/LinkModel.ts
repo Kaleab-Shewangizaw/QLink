@@ -1,9 +1,9 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { Answer } from "./qModels";
+import { Answer, Asker } from "./qModels";
 
 export interface ILink extends Document {
   name: string;
-  owner: string;
+  owner: Asker;
   questions: Answer[];
   isOpen: boolean;
   createdAt: Date;
@@ -14,7 +14,12 @@ export interface ILink extends Document {
 const linkSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
-    owner: { type: String, required: true },
+    owner: {
+      id: { type: String, required: true },
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+      image: { type: String, required: false },
+    },
     questions: [
       {
         id: {

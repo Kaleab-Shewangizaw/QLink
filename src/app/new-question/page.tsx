@@ -9,6 +9,7 @@ import { ArrowLeft, ImageIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { BsShift } from "react-icons/bs";
 
 export default function NewQuestion() {
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -186,6 +187,9 @@ export default function NewQuestion() {
               </Button>
               <Button variant="outline" type="submit" disabled={loading}>
                 {loading ? "Submitting..." : "Submit"}
+                <span className="ml-3 text-sm text-gray-400 flex items-center justify-center">
+                  ( <BsShift /> + Enter ){" "}
+                </span>
               </Button>
             </div>
           </div>

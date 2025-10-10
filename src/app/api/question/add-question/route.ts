@@ -21,8 +21,6 @@ export async function POST(req: Request) {
       isAnonymous,
     }: AddQuestionRequest = await req.json();
 
-    console.log("Received images:", images);
-
     if (title.trim().length === 0) {
       return NextResponse.json(
         { message: "Question title must be a non-empty string" },
@@ -44,7 +42,12 @@ export async function POST(req: Request) {
       id: uuidv4(),
       title: title.trim(),
       description: description?.toString() || "",
-      asker: session.user.id,
+      asker: {
+        id: isAnonymous ? "" : session.user.id,
+        name: session.user.name || "Anonymous",
+        email: session.user.email || "",
+        image: session.user.image || "",
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
       isAnonymous,
@@ -52,8 +55,6 @@ export async function POST(req: Request) {
       views: 0,
       answers: [],
     };
-
-    console.log("newQuestion object:", newQuestion);
 
     const questionDoc = await Question.create(newQuestion);
 

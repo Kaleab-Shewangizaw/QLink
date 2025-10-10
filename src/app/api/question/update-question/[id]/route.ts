@@ -24,7 +24,12 @@ export async function PUT(
 
     if (body.answers && body.answers.length > 0) {
       const newAnswer = body.answers[body.answers.length - 1];
-      newAnswer.respondent = session.user.id;
+      newAnswer.respondent = {
+        id: session.user.id,
+        name: session.user.name || "Anonymous",
+        email: session.user.email || "",
+        image: session.user.image || "",
+      };
 
       const question = await Question.findByIdAndUpdate(
         id,
