@@ -181,8 +181,6 @@ export default function NewQuestion() {
                 onChange={(e) => setDescription(e.target.value)}
                 id="description"
                 onKeyDown={(e) => {
-                  //if enter only is pressed, submit the form
-                  //if shift + enter is pressed, add a new line
                   if (e.key === "Enter" && !e.shiftKey) {
                     handleSubmit(e);
                   } else if (e.key === "Enter" && e.shiftKey) {
