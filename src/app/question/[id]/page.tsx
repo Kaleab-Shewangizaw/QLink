@@ -145,6 +145,9 @@ export default function QuestionPage() {
                   rows={10}
                   value={newAnswer}
                   onChange={(e) => setNewAnswer(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && !e.shiftKey && handleAddAnswer()
+                  }
                 />
               </div>
               <DialogFooter>
