@@ -1,6 +1,7 @@
 "use client";
 
 import QuestionComp from "@/comp/questionComp";
+import { IQuestion } from "@/lib/models/qModels";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,7 +38,7 @@ export default function MyQuestionsPage() {
         <p>Loading...</p>
       ) : (
         <ul>
-          {questions.map((question) => (
+          {questions.map((question: IQuestion) => (
             <QuestionComp key={question._id} question={question} />
           ))}
         </ul>
