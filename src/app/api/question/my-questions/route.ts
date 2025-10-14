@@ -15,7 +15,9 @@ export async function GET() {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const userQuestions = await Question.find({ asker: session.user.id }).sort({
+    const userQuestions = await Question.find({
+      "asker.id": session.user.id,
+    }).sort({
       createdAt: -1,
     });
 
