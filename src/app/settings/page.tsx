@@ -30,50 +30,6 @@ export default function Settingspage() {
           {editMode ? "Save" : "Edit"}
         </Button>
       </div>
-      <div className="p-4">
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={!editMode}
-            className={`w-full border p-2 rounded ${
-              editMode
-                ? "border-blue-500 focus:border-blue-700"
-                : "bg-gray-100 cursor-not-allowed"
-            }`}
-            placeholder="Enter your name"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">
-            Profile Image URL
-          </label>
-          <input
-            type="text"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            disabled={!editMode}
-            className={`w-full border p-2 rounded ${
-              editMode
-                ? "border-blue-500 focus:border-blue-700"
-                : "bg-gray-100 cursor-not-allowed"
-            }`}
-            placeholder="Enter image URL"
-          />
-        </div>
-        {image && (
-          <div className="mt-4">
-            <label className="block text-sm font-medium mb-1">Preview</label>
-            <Image
-              src={image}
-              alt="Profile Preview"
-              className="w-32 h-32 object-cover rounded-full border"
-            />
-          </div>
-        )}
-      </div>
     </div>
   );
 }
