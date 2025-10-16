@@ -30,6 +30,52 @@ export default function Settingspage() {
           {editMode ? "Save" : "Edit"}
         </Button>
       </div>
+      <div>
+        <div className="flex flex-col items-center mt-5 gap-3">
+          <div className="relative w-32 h-32">
+            <Image
+              src={
+                image ||
+                "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+              }
+              alt="Profile Picture"
+              width={128}
+              height={128}
+              className="rounded-full object-cover"
+            />
+            {editMode && (
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute bottom-0 right-0 bg-gray-200 bg-opacity-75 rounded-full p-1 cursor-pointer"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setImage(reader.result as string);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            )}
+          </div>
+          <div className="flex flex-col items-center">
+            {editMode ? (
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="border border-gray-300 rounded px-2 py-1"
+              />
+            ) : (
+              <h3 className="text-xl font-medium">{name || "Your Name"}</h3>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
