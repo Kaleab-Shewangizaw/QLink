@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
 import { BsEye } from "react-icons/bs";
@@ -21,9 +21,9 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Answer, Asker, IQuestion } from "@/lib/models/qModels";
-import { User } from "better-auth";
+
 import { ILink } from "@/lib/models/LinkModel";
-import Image from "next/image";
+
 import QuestionImages from "./qustionImages";
 
 export function Top({
@@ -249,7 +249,12 @@ export function Bottom({
 
     const newAnswerObj: Answer = {
       text: replyTextParam,
-      respondent: session?.user.id,
+      respondent: {
+        id: session?.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        image: session?.user.image,
+      },
       upVotes: [],
       downVotes: [],
       isReply: true,
@@ -406,6 +411,7 @@ export default function QuestionComp({ question }: { question?: IQuestion }) {
     <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
       <Top question={question} />
       <div className="p-2">{question?.title}</div>
+      <p className="">{question?.description}</p>
 
       <QuestionImages images={question?.images || []} />
 
