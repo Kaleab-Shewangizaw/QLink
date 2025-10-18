@@ -411,7 +411,7 @@ export default function QuestionComp({ question }: { question?: IQuestion }) {
     <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
       <Top question={question} />
       <div className="p-2">{question?.title}</div>
-      <p className="">{question?.description}</p>
+      <p className="line-clamp-2">{question?.description}</p>
 
       <QuestionImages images={question?.images || []} />
 
