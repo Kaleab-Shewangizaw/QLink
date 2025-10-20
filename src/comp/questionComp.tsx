@@ -40,7 +40,7 @@ export function Top({
   // const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
 
-  const asker: Asker =
+  const asker: Asker | undefined =
     question?.asker ||
     (answer && answer.respondent) ||
     link?.owner ||
@@ -85,7 +85,7 @@ export function Top({
 
         <p className=" text-sm flex items-center">
           <Link href="">
-            {session?.user.id === asker.id && isAnonymous
+            {session?.user.id === asker?.id && isAnonymous
               ? `Anonymous/${asker?.name || "Loading..."}`
               : isAnonymous
               ? "Anonymous"
@@ -411,7 +411,9 @@ export default function QuestionComp({ question }: { question?: IQuestion }) {
     <div className="w-full p-2 shadow-md/10 dark:border rounded-md dark:border-gray-900">
       <Top question={question} />
       <div className="p-2">{question?.title}</div>
-      <p className="line-clamp-2">{question?.description}</p>
+      <p className="line-clamp-2 px-3 whitespace-pre-line text-sm text-gray-600">
+        {question?.description}
+      </p>
 
       <QuestionImages images={question?.images || []} />
 

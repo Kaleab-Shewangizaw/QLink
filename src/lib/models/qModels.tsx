@@ -20,7 +20,7 @@ export interface Asker {
   id: string;
   name: string;
   email: string;
-  image: string;
+  image?: string | null;
 }
 
 export interface IQuestion extends Document {
