@@ -137,7 +137,6 @@ export function Bottom({
       []
   );
 
-  // 👇 update API route based on question/answer
   const updateVotesInDB = async (
     newUpVotes: string[],
     newDownVotes: string[]
