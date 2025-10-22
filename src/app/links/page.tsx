@@ -1,6 +1,7 @@
 "use client";
 
 import LinkComp from "@/comp/linkComp";
+import { ILink } from "@/lib/models/LinkModel";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,7 +38,7 @@ export default function MyLinksPage() {
         <p>Loading...</p>
       ) : (
         <ul>
-          {links.map((link) => (
+          {links.map((link: ILink) => (
             <LinkComp key={link._id} link={link} />
           ))}
         </ul>
