@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import SignUp from "./SignUp";
 import { authClient } from "@/app/lib/auth-client";
 import { Link, Loader2, LogOut, Settings } from "lucide-react";
-import { BiComment, BiQuestionMark } from "react-icons/bi";
+import { BiQuestionMark } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
