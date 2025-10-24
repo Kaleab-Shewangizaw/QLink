@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
 import { BsEye } from "react-icons/bs";
@@ -20,11 +20,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Answer, Asker, IQuestion } from "@/lib/models/qModels";
+import { Answer, IQuestion } from "@/lib/models/qModels";
 
 import { ILink } from "@/lib/models/LinkModel";
 
 import QuestionImages from "./qustionImages";
+import { User } from "better-auth";
 
 export function Top({
   quest,
@@ -37,32 +38,32 @@ export function Top({
   question?: IQuestion;
   answer?: Answer;
 }) {
-  // const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
 
-  const asker: Asker | undefined =
-    question?.asker ||
-    (answer && answer.respondent) ||
-    link?.owner ||
-    quest?.respondent;
+  const asker: string | undefined =
+    question?.asker.id ||
+    (answer && answer.respondent?.id) ||
+    link?.owner.id ||
+    quest?.respondent?.id;
 
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     if (!asker) return;
-  //     try {
-  //       const res = await fetch(`/api/user/get-user/${asker}`);
-  //       if (res.ok) {
-  //         const userData = await res.json();
-  //         setUser(userData);
-  //       } else {
-  //         console.error("Failed to fetch user data");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user data:", error);
-  //     }
-  //   };
-  //   fetchUser();
-  // }, [asker]);
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!asker) return;
+      try {
+        const res = await fetch(`/api/user/get-user/${asker}`);
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
+          console.error("Failed to fetch user data");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUser();
+  }, [asker]);
 
   const isAnonymous = question?.isAnonymous || quest?.isAnonymous || false;
 
@@ -76,7 +77,7 @@ export function Top({
                 ? ""
                 : quest
                 ? "/asker.png"
-                : asker?.image || "/profilePicture2.png"
+                : user?.image || "/profilePicture2.png"
             }
             alt="user"
           />
@@ -85,13 +86,13 @@ export function Top({
 
         <p className=" text-sm flex items-center">
           <Link href="">
-            {session?.user.id === asker?.id && isAnonymous
-              ? `Anonymous/${asker?.name || "Loading..."}`
+            {session?.user.id === user?.id && isAnonymous
+              ? `Anonymous/${user?.name || "Loading..."}`
               : isAnonymous
               ? "Anonymous"
               : quest
               ? "Asker"
-              : asker?.name || "Loading..."}
+              : user?.name || "Loading..."}
           </Link>
         </p>
       </div>

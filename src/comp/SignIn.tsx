@@ -119,7 +119,7 @@ export default function SignIn() {
                 await signIn.social(
                   {
                     provider: "google",
-                    callbackURL: "/dashboard",
+                    callbackURL: "/",
                   },
                   {
                     onRequest: () => {
@@ -157,7 +157,7 @@ export default function SignIn() {
               </svg>
               Sign in with Google
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               className={cn("w-full gap-2")}
               disabled={loading}
@@ -190,7 +190,7 @@ export default function SignIn() {
                 ></path>
               </svg>
               Sign in with Github
-            </Button>
+            </Button> */}
           </div>
         </div>
       </CardContent>
