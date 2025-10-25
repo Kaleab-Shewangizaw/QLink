@@ -18,10 +18,9 @@ export async function POST(req: Request) {
     const session = await auth.api.getSession({ headers: heradersList });
 
     if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Login required." }, { status: 401 });
     }
 
-    // Create new link
     const newLink = {
       name: name.trim(),
       owner: session.user.id,

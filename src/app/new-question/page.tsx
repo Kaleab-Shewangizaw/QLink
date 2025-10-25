@@ -9,6 +9,7 @@ import { ArrowLeft, ImageIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { authClient } from "../lib/auth-client";
 
 export default function NewQuestion() {
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -17,6 +18,8 @@ export default function NewQuestion() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+  const { data: session } = authClient.useSession();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -60,6 +63,10 @@ export default function NewQuestion() {
       | React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
+    if (!session?.user) {
+      alert("You must be signed in to submit a question.");
+      return;
+    }
     setLoading(true);
     try {
       const imagesBase64 = await convertImagesToBase64(images.slice(0, 4));
@@ -126,7 +133,7 @@ export default function NewQuestion() {
                   className="w-fit flex text-gray-400 hover:text-gray-200 cursor-pointer ml-auto border p-2 rounded-md"
                 >
                   <ImageIcon />
-                  add images
+                  add images {`(${images.length}/4)`}
                 </Label>
               )}
               <Input
@@ -208,9 +215,13 @@ export default function NewQuestion() {
               >
                 Cancel
               </Button>
-              <Button variant="outline" type="submit" disabled={loading}>
+              <Button
+                variant="outline"
+                type="submit"
+                disabled={loading || title.trim() === ""}
+              >
                 {loading ? "Submitting..." : "Submit"}
-                <span className="ml-3 text-sm text-gray-400 flex items-center justify-center">
+                <span className="ml-1 text-sm text-gray-400 flex items-center justify-center">
                   (Enter){" "}
                 </span>
               </Button>

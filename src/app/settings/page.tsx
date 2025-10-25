@@ -11,13 +11,31 @@ import { Label } from "@/components/ui/label";
 export default function Settingspage() {
   const { data: session } = authClient.useSession();
   const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState(session?.user?.name || "");
-  const [image, setImage] = useState(
-    session?.user?.image || "/profilePicture2.png"
-  );
+  const [name, setName] = useState(session?.user?.name);
+  const [image, setImage] = useState(session?.user?.image);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const handleDeleteAccount = () => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    if (confirmDelete && session?.user?.id) {
+      fetch(`/api/user/delete-user/${session.user.id}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            router.push("/");
+            authClient.signOut();
+          } else {
+            console.error("Error deleting user:", data.message);
+          }
+        })
+        .catch((err) => console.error("Request failed:", err));
+    }
+  };
   return (
     <div className="px-2 pb-5 flex flex-col">
       <div className="sticky top-13 z-10 bg-white dark:bg-[#0a0a0a] p-2 left-0  text-gray-500 flex items-center justify-between">
@@ -28,23 +46,43 @@ export default function Settingspage() {
           <ArrowLeft /> Back
         </button>
         <h2 className="text-lg font-semibold">Settings</h2>
-        <Button
-          variant={editMode ? "default" : "outline"}
-          size={"sm"}
-          onClick={() => setEditMode(!editMode)}
-        >
-          {editMode ? "Cancel" : "Edit"}
-        </Button>
+        <div className="flex items-center gap-2 justify-center">
+          {!editMode && (
+            <Button
+              variant="destructive"
+              onClick={() => {
+                handleDeleteAccount();
+              }}
+            >
+              Delete Account
+            </Button>
+          )}
+          <Button
+            variant={editMode ? "default" : "outline"}
+            size={"sm"}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? "Cancel" : "Edit"}
+          </Button>
+        </div>
       </div>
       <div>
         <div className="flex flex-col items-center mt-5 gap-3">
           <div className="relative w-32 h-32">
-            <Image
-              src={image}
-              alt="Profile Picture"
-              fill
-              className={`rounded-full object-cover ${editMode ? "" : ""}`}
-            />
+            {image ? (
+              <Image
+                src={image}
+                alt="Profile Picture"
+                fill
+                className={`rounded-full object-cover ${editMode ? "" : ""}`}
+              />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center">
+                <span className="text-white text-6xl ">
+                  {session?.user?.name.charAt(0)}
+                </span>
+              </div>
+            )}
             {editMode && (
               <>
                 <Label
@@ -90,7 +128,7 @@ export default function Settingspage() {
                     setEditMode(false);
                     setLoading(true);
                     fetch(`/api/user/update-user/${session?.user?.id}`, {
-                      method: "PUT", // ✅ FIXED
+                      method: "PUT",
                       headers: {
                         "Content-Type": "application/json",
                       },

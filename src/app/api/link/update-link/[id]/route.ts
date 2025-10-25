@@ -18,7 +18,10 @@ export async function PUT(
     const session = await auth.api.getSession({ headers: headersList });
 
     if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Log in required." },
+        { status: 401 }
+      );
     }
 
     const body = await req.json();

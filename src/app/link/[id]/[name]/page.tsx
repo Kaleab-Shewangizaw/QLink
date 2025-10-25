@@ -22,16 +22,6 @@ import { ArrowLeft, TrashIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-async function fetchLink(id: string): Promise<ILink> {
-  const res = await fetch(`/api/link/get-link/${id}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch link");
-  }
-  return res.json();
-}
-
 export default function LinkPage() {
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id;
@@ -47,7 +37,9 @@ export default function LinkPage() {
   useEffect(() => {
     const getLink = async () => {
       try {
-        const linkData = await fetchLink(linkId);
+        const linkData = await fetch(`/api/link/get-link/${linkId}`, {
+          method: "GET",
+        }).then((res) => res.json());
 
         if (!linkData) {
           setError(true);
@@ -94,7 +86,7 @@ export default function LinkPage() {
 
     const newQuestionObj: Answer = {
       text: newQuestion,
-      respondent: userId,
+      isReply: false,
       upVotes: [],
       downVotes: [],
       questionId: data?._id,

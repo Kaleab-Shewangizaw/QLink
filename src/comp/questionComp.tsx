@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
+// import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reply, Trash } from "lucide-react";
@@ -40,6 +40,7 @@ export function Top({
 }) {
   const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
+  const [loading, setLoading] = useState(false);
 
   const asker: string | undefined =
     question?.asker.id ||
@@ -50,6 +51,7 @@ export function Top({
   useEffect(() => {
     const fetchUser = async () => {
       if (!asker) return;
+      setLoading(true);
       try {
         const res = await fetch(`/api/user/get-user/${asker}`);
         if (res.ok) {
@@ -60,6 +62,8 @@ export function Top({
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchUser();
@@ -71,29 +75,26 @@ export function Top({
     <div className="w-full flex justify-between items-center">
       <div className="flex items-center text-gray-500 gap-2 hover:text-gray-200 cursor-pointer">
         <Avatar>
-          <AvatarImage
-            src={
-              isAnonymous
-                ? ""
-                : quest
-                ? "/asker.png"
-                : user?.image || "/profilePicture2.png"
-            }
-            alt="user"
-          />
-          <AvatarFallback>?</AvatarFallback>
+          {user?.image ? (
+            <AvatarImage src={user.image} alt={user.name || "User Avatar"} />
+          ) : null}
+          <AvatarFallback>{user?.name.charAt(0) || "?"}</AvatarFallback>
         </Avatar>
 
         <p className=" text-sm flex items-center">
-          <Link href="">
-            {session?.user.id === user?.id && isAnonymous
-              ? `Anonymous/${user?.name || "Loading..."}`
+          <>
+            {session && session?.user.id === user?.id && isAnonymous
+              ? `Anonymous/${user && user?.name ? "You" : "Asker"}`
               : isAnonymous
               ? "Anonymous"
               : quest
               ? "Asker"
-              : user?.name || "Loading..."}
-          </Link>
+              : loading
+              ? "Loading..."
+              : user
+              ? user?.name
+              : "Deleted Account"}
+          </>
         </p>
       </div>
       <div className="text-sm text-gray-500">
@@ -365,7 +366,7 @@ export function Bottom({
 
         {isAnswer ? (
           <>
-            {session?.user?.id === answer?.respondent?.id && (
+            {session && session?.user?.id === answer?.respondent?.id && (
               <Button
                 variant="outline"
                 size="icon"

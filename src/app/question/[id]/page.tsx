@@ -51,7 +51,10 @@ export default function QuestionPage() {
   }, [questionId]);
 
   const handleDelete = async (id: string | undefined) => {
-    if (!id) return;
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this question?"
+    );
+    if (!id || !confirmDelete) return;
     try {
       const res = await fetch(`/api/question/delete-question/${id}`, {
         method: "DELETE",
@@ -68,6 +71,10 @@ export default function QuestionPage() {
 
   const handleAddAnswer = async () => {
     if (!newAnswer.trim()) return;
+    if (!session?.user) {
+      alert("You must be signed in to submit an answer.");
+      return;
+    }
 
     const newAnswerObj: Answer = {
       text: newAnswer,
@@ -112,7 +119,7 @@ export default function QuestionPage() {
           <ArrowLeft /> Back
         </button>
         <div className="flex items-center gap-2">
-          {userId === data?.asker.id && (
+          {session && userId === data?.asker.id && (
             <Button
               variant={"outline"}
               className="text-red-400"
@@ -154,7 +161,9 @@ export default function QuestionPage() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button onClick={handleAddAnswer}>Answer</Button>
+                <Button disabled={!newAnswer.trim()} onClick={handleAddAnswer}>
+                  Answer
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

@@ -9,8 +9,8 @@ export interface Answer {
   images?: string[];
   isReply: boolean;
   isAnonymous?: boolean;
-  replies: number;
-  questionId: string;
+  replies?: number;
+  questionId?: string;
   repliedTo?: string;
   createdAt: Date;
   updatedAt: Date;
