@@ -22,6 +22,26 @@ export async function PUT(
 
     const body = await req.json();
 
+    if (body.deleteAnswerId) {
+      const question = await Question.findByIdAndUpdate(
+        id,
+        { $pull: { answers: { _id: body.deleteAnswerId } } },
+        { new: true }
+      );
+
+      if (!question) {
+        return NextResponse.json(
+          { success: false, message: "Question not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        { success: true, message: "Answer deleted successfully", question },
+        { status: 200 }
+      );
+    }
+
     if (body.answers && body.answers.length > 0) {
       const newAnswer = body.answers[body.answers.length - 1];
       newAnswer.respondent = {

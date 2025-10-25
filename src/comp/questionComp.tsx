@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Reply } from "lucide-react";
+import { Reply, Trash } from "lucide-react";
 import { BsEye } from "react-icons/bs";
 import { BiComment, BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { authClient } from "@/app/lib/auth-client";
@@ -241,6 +241,38 @@ export function Bottom({
   const [replyText, setReplyText] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handleDelete = async () => {
+    if (!answer || !answers || !setAnswers) return;
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this answer?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      setLoading(true);
+
+      const updatedAnswers = answers.filter((ans) => ans._id !== answer._id);
+
+      await fetch(`/api/question/update-question/${answer.questionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deleteAnswerId: answer._id }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            console.log("Answer deleted!");
+          }
+        });
+
+      setAnswers(updatedAnswers);
+    } catch (error) {
+      console.error("Error deleting answer:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleReply = async (replyTextParam: string) => {
     if (!replyTextParam.trim()) return;
     if (!session?.user?.id) return;
@@ -281,14 +313,16 @@ export function Bottom({
         setReplyText("");
         setOpen(false);
         setAnswers([...answers, newAnswerObj]);
-        setLoading(false);
       } else {
         console.error("Failed to add answer");
       }
     } catch (error) {
       console.error("Error adding answer:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="pt-2 flex items-center justify-between">
       <div className="flex text-gray-500 items-center gap-2">
@@ -328,67 +362,79 @@ export function Bottom({
             </div>
           </>
         )}
+
         {isAnswer ? (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Reply />
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-[525px]">
-              <DialogHeader>
-                <DialogTitle className="text-sm text-gray-400 font-normal">
-                  Reply to answer
-                </DialogTitle>
-                <DialogDescription
-                  className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
-                    !showMore && "line-clamp-3"
-                  }`}
-                >
-                  {answer?.text}
-
-                  {answer?.text && answer?.text.length > 100 && (
-                    <span
-                      className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
-                      onClick={() => setShowMore(!showMore)}
-                    >
-                      {showMore ? "Show less" : "Show more"}
-                    </span>
-                  )}
-                </DialogDescription>
-              </DialogHeader>
-
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-
-                  handleReply(replyText);
-                  setLoading(false);
-                }}
-                className="grid gap-4"
+          <>
+            {session?.user?.id === answer?.respondent?.id && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleDelete}
+                disabled={loading}
               >
-                <div className="grid gap-3">
-                  <Textarea
-                    id="reply"
-                    name="reply"
-                    className="w-full"
-                    rows={6}
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                  />
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit" disabled={loading}>
-                    {loading ? "..." : "Reply"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+                <Trash />
+              </Button>
+            )}
+
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Reply />
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                  <DialogTitle className="text-sm text-gray-400 font-normal">
+                    Reply to answer
+                  </DialogTitle>
+                  <DialogDescription
+                    className={`text-gray-600 dark:text-gray-400 text-sm mt-1 ${
+                      !showMore && "line-clamp-3"
+                    }`}
+                  >
+                    {answer?.text}
+
+                    {answer?.text && answer?.text.length > 100 && (
+                      <span
+                        className="text-gray-600 dark:text-gray-400 text-sm mt-5 text-end hover:underline cursor-pointer"
+                        onClick={() => setShowMore(!showMore)}
+                      >
+                        {showMore ? "Show less" : "Show more"}
+                      </span>
+                    )}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleReply(replyText);
+                  }}
+                  className="grid gap-4"
+                >
+                  <div className="grid gap-3">
+                    <Textarea
+                      id="reply"
+                      name="reply"
+                      className="w-full"
+                      rows={6}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit" disabled={loading}>
+                      {loading ? "..." : "Reply"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </>
         ) : !isReading ? (
           <Button
             variant="outline"

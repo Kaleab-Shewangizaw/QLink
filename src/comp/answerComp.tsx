@@ -22,6 +22,7 @@ export default function AnswerComp({
   if (isReply) {
     repliedAns = question?.answers?.find((ans) => ans._id === answer.repliedTo);
   }
+
   return (
     <div
       className={`w-full  mt-4 shadow-md/10 dark:border rounded-md dark:border-gray-900 relative ${

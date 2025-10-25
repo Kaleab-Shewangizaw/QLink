@@ -88,13 +88,20 @@ export default function Navbar() {
                 <Button>Log In</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px] px-10">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setSignIn(!signIn)}
-                >
-                  {signIn ? "Sign Up" : "Sign In"}
-                </Button>
+                <div className="flex  items-center mb-4">
+                  <span className="text-sm text-muted-foreground">
+                    {signIn
+                      ? "Don't have an account?"
+                      : "Already have an account?"}
+                  </span>
+                  <Button
+                    variant="link"
+                    className="text-sm"
+                    onClick={() => setSignIn(!signIn)}
+                  >
+                    {signIn ? "Sign Up here" : "Sign In here"}
+                  </Button>
+                </div>
                 {signIn ? <SignIn /> : <SignUp />}
               </DialogContent>
             </form>
