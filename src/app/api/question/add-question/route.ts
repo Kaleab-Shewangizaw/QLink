@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       title,
       description = "",
       images = [],
-      isAnonymous,
+      isAnonymous = false,
     }: AddQuestionRequest = await req.json();
 
     if (title.trim().length === 0) {
@@ -43,14 +43,14 @@ export async function POST(req: Request) {
       title: title.trim(),
       description: description?.toString().trim() || "",
       asker: {
-        id: isAnonymous ? "" : session.user.id,
+        id: session.user.id,
         name: session.user.name || "Anonymous",
         email: session.user.email || "",
         image: session.user.image || "",
       },
       createdAt: new Date(),
       updatedAt: new Date(),
-      isAnonymous,
+      isAnonymous: isAnonymous ? false : isAnonymous,
       images,
       views: 0,
       answers: [],

@@ -206,6 +206,7 @@ export default function NewQuestion() {
                 onCheckedChange={(checked) => setIsAnonymous(checked === true)}
               />
               <Label htmlFor="anonymous">Ask Anonymously </Label>
+              {/* have this text right below the check box using <p> */}
             </div>
             <div className="flex gap-2 justify-end">
               <Button
@@ -227,6 +228,10 @@ export default function NewQuestion() {
               </Button>
             </div>
           </div>
+          <p className="text-gray-400 font-normal w-full text-left mt-4 text-sm">
+            {isAnonymous &&
+              "Your question is not anonymous. It will be implemented soon. Stay tuned!"}
+          </p>
         </form>
       </div>
     </div>

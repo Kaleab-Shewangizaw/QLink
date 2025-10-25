@@ -25,7 +25,7 @@ export default function Navbar() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const loggedIn = !!session?.user;
-  const [signIn, setSignIn] = useState(false);
+  const [signIn, setSignIn] = useState(true);
   useEffect(() => {
     if (session) {
       console.log("we have session:", session);
