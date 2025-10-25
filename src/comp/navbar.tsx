@@ -48,10 +48,9 @@ export default function Navbar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage
-                  src={session?.user.image || "/profilePicture2.png"}
-                  alt={session?.user.name || "User"}
-                />
+                {session?.user.image && (
+                  <AvatarImage src={session.user.image} alt="User Avatar" />
+                )}
                 <AvatarFallback>
                   {session?.user.name?.charAt(0) || "QL"}
                 </AvatarFallback>

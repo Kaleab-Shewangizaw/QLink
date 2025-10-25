@@ -63,7 +63,7 @@ export default function AddNew() {
           });
         } else {
           res.json().then((data) => {
-            alert(data.message);
+            alert(data.message || "Error creating link");
             setLoading(false);
           });
         }

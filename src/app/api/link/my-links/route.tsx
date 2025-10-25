@@ -15,7 +15,7 @@ export async function GET() {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const userLinks = await Link.find({ owner: session.user.id }).sort({
+    const userLinks = await Link.find({ "owner.id": session.user.id }).sort({
       createdAt: -1,
     });
 

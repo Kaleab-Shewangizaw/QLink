@@ -78,6 +78,7 @@ export function Top({
           {user?.image ? (
             <AvatarImage src={user.image} alt={user.name || "User Avatar"} />
           ) : null}
+          {quest && <AvatarImage src="/asker.png" alt={"User Avatar"} />}
           <AvatarFallback>{user?.name.charAt(0) || "?"}</AvatarFallback>
         </Avatar>
 

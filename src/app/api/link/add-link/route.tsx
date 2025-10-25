@@ -23,7 +23,12 @@ export async function POST(req: Request) {
 
     const newLink = {
       name: name.trim(),
-      owner: session.user.id,
+      owner: {
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        image: session.user.image,
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -39,7 +44,7 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     return NextResponse.json(
-      { message: "Internal Server Error", error },
+      { message: "Internal server errore", error },
       { status: 500 }
     );
   }
