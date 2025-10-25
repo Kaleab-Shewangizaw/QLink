@@ -53,7 +53,10 @@ export default function LinkComp({ link }: { link: ILink }) {
             className="mr-2"
             onClick={() => {
               navigator.clipboard.writeText(
-                `${window.location.origin}/link/${link._id}/${link.name}`
+                `${window.location.origin}/link/${link._id}/${link.name.replace(
+                  / /g,
+                  "%20"
+                )}`
               );
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);

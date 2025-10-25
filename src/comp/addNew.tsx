@@ -117,7 +117,6 @@ export default function AddNew() {
                       with others.
                     </p>
                     <div className="flex items-center justify-between w-[100%] max-w-[525px] rounded-md border bg-muted px-3 py-2 text-sm">
-                      <span className="truncate ">{link}</span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -126,9 +125,13 @@ export default function AddNew() {
                         className="ml-2"
                       >
                         {copied ? (
-                          <Check className="h-4 w-4 text-green-500" />
+                          <>
+                            <Check className="h-4 w-4 text-green-500" /> copied
+                          </>
                         ) : (
-                          <Copy className="h-4 w-4" />
+                          <>
+                            <Copy className="h-4 w-4" /> copy
+                          </>
                         )}
                       </Button>
                     </div>
