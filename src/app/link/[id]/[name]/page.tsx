@@ -83,7 +83,7 @@ export default function LinkPage() {
   const handleAddQuestion = async () => {
     if (!session?.user) return;
     if (!newQuestion.trim()) return;
-
+    setLoading(true);
     const newQuestionObj: Answer = {
       text: newQuestion,
       isReply: false,
@@ -114,6 +114,8 @@ export default function LinkPage() {
       }
     } catch (error) {
       console.error("Error adding answer:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -179,7 +181,9 @@ export default function LinkPage() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button onClick={handleAddQuestion}>Ask</Button>
+                <Button disabled={loading} onClick={handleAddQuestion}>
+                  {loading ? "Asking..." : "Ask"}
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
