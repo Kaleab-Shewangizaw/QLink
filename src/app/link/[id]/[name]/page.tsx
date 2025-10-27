@@ -81,8 +81,14 @@ export default function LinkPage() {
   };
 
   const handleAddQuestion = async () => {
-    if (!session?.user) return;
-    if (!newQuestion.trim()) return;
+    if (!session?.user) {
+      alert("You must be signed in to ask a question.");
+      return;
+    }
+    if (!newQuestion.trim()) {
+      alert("Question cannot be empty.");
+      return;
+    }
     setLoading(true);
     const newQuestionObj: Answer = {
       text: newQuestion,
@@ -116,6 +122,7 @@ export default function LinkPage() {
       console.error("Error adding answer:", error);
     } finally {
       setLoading(false);
+      setOpen(false);
     }
   };
 
@@ -179,7 +186,9 @@ export default function LinkPage() {
               </div>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
                 </DialogClose>
                 <Button disabled={loading} onClick={handleAddQuestion}>
                   {loading ? "Asking..." : "Ask"}
