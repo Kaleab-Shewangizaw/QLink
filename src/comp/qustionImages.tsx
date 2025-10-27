@@ -34,7 +34,7 @@ export default function QuestionImages({ images }: { images: string[] }) {
 
     pushedRef.current = true;
 
-    const onPopState = (ev: PopStateEvent) => {
+    const onPopState = () => {
       // If dialog is open and a pop happens, close it instead of navigating away
       if (open) {
         // set a flag so subsequent history.back() triggered by our cleanup doesn't re-trigger logic
@@ -69,7 +69,8 @@ export default function QuestionImages({ images }: { images: string[] }) {
       ignoreNextPopRef.current = true;
       try {
         window.history.back();
-      } catch (e) {
+      } catch (error) {
+        console.error("Error going back in history:", error);
         // fail silently if history.back isn't available
       } finally {
         pushedRef.current = false;
