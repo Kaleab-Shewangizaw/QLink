@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from "@/app/lib/auth";
 import { Question } from "@/lib/models/qModels";
 import dbConnect from "@/lib/mongodb";
@@ -32,7 +33,7 @@ export async function PUT(
     }
 
     if (body.deleteAnswerId) {
-      const answer = question.answers.find(
+      const answer = question.answers?.find(
         (a: any) => a._id.toString() === body.deleteAnswerId
       );
 
@@ -53,7 +54,7 @@ export async function PUT(
         );
       }
 
-      question.answers = question.answers.filter(
+      question.answers = question.answers?.filter(
         (a: any) => a._id.toString() !== body.deleteAnswerId
       );
       await question.save();
@@ -76,7 +77,7 @@ export async function PUT(
       // It should already be in newAnswer if passed from frontend, but let's be explicit if needed.
       // The frontend sends the whole answer object in the array, so newAnswer has it.
 
-      question.answers.push(newAnswer);
+      question.answers?.push(newAnswer);
       await question.save();
 
       return NextResponse.json(
