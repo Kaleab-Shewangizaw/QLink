@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { MongoClient, ObjectId } from "mongodb";
-import { auth } from "@/app/lib/auth";
-import { headers } from "next/headers";
 
 const client = new MongoClient(process.env.MONGODB_URI!);
 const db = client.db();
