@@ -17,24 +17,18 @@ export async function GET(
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
-    const headersList = await headers();
-    const session = await auth.api.getSession({ headers: headersList });
-
-    if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    if (session.user.id !== id) {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    }
-
-    const user = await db.collection("user").findOne({ _id: new ObjectId(id) });
+    const user = await db
+      .collection("user")
+      .findOne(
+        { _id: new ObjectId(id) },
+        { projection: { name: 1, image: 1, _id: 1 } }
+      );
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({ ...user, id: user._id.toString() });
   } catch (error) {
     console.error("Error fetching user:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
