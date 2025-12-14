@@ -18,7 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { ILink } from "@/lib/models/LinkModel";
 import { Answer } from "@/lib/models/qModels";
-import { ArrowLeft, TrashIcon } from "lucide-react";
+import { ArrowLeft, TrashIcon, Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -26,6 +26,7 @@ export default function LinkPage() {
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id;
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [data, setData] = useState<ILink>();
   const [error, setError] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
@@ -54,6 +55,8 @@ export default function LinkPage() {
       } catch (error) {
         console.error("Error fetching link:", error);
         setError(true);
+      } finally {
+        setFetching(false);
       }
     };
     if (linkId) getLink();
@@ -198,7 +201,11 @@ export default function LinkPage() {
           </Dialog>
         </div>
       </div>
-      {error ? (
+      {fetching ? (
+        <div className="flex items-center justify-center mt-10">
+          <Loader2 className="animate-spin" />
+        </div>
+      ) : error ? (
         <div className="flex items-center justify-center text-xl text-gray-600">
           Link closed or expired!
         </div>

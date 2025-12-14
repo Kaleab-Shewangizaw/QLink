@@ -94,7 +94,9 @@ export function Top({
               ? "Loading..."
               : user
               ? user?.name
-              : "Deleted Account"}
+              : asker
+              ? "Deleted Account"
+              : ""}
           </>
         </p>
       </div>
