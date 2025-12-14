@@ -46,7 +46,7 @@ export default function MyAnswers() {
       <h1 className="text-2xl font-bold mb-4">My Answers</h1>
       {questions.length === 0 ? (
         <div className="text-center text-gray-500 mt-10">
-          <p>You haven't answered any questions yet.</p>
+          <p>You haven&apos;t answered any questions yet.</p>
         </div>
       ) : (
         questions.map((question) => (
