@@ -16,11 +16,11 @@ import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
 import { compressImage } from "@/lib/utils";
 
-export default function SignUp() {
+export default function SignUp({ onSuccess }: { onSuccess?: () => void }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,6 +29,7 @@ export default function SignUp() {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +37,8 @@ export default function SignUp() {
     if (file) {
       setImage(file);
       try {
-        const compressed = await compressImage(file);
-        setImagePreview(compressed);
+        const compressed = compressImage(file);
+        setImagePreview(await compressed);
       } catch (error) {
         console.error("Error compressing image:", error);
       }
@@ -45,7 +46,7 @@ export default function SignUp() {
   };
 
   return (
-    <Card className="z-50 rounded-md rounded-t-none max-w-md">
+    <Card className="max-w-md border-none shadow-none">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
         <CardDescription className="text-xs md:text-sm">
@@ -158,7 +159,7 @@ export default function SignUp() {
                 password,
                 name: `${firstName} ${lastName}`,
                 image: image ? await compressImage(image) : "",
-                callbackURL: "/",
+                callbackURL: pathname || "/",
                 fetchOptions: {
                   onResponse: () => {
                     setLoading(false);
@@ -170,7 +171,12 @@ export default function SignUp() {
                     toast.error(ctx.error.message);
                   },
                   onSuccess: async () => {
-                    router.push("/");
+                    if (onSuccess) {
+                      onSuccess();
+                    } else {
+                      router.push("/");
+                    }
+                    router.refresh();
                   },
                 },
               });

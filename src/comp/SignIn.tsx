@@ -18,17 +18,18 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { signIn } from "@/app/lib/auth-client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function SignIn() {
+export default function SignIn({ onSuccess }: { onSuccess?: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
-    <Card className="max-w-md">
+    <Card className="max-w-md border-none shadow-none">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
         <CardDescription className="text-xs md:text-sm">
@@ -98,7 +99,11 @@ export default function SignIn() {
                     setLoading(false);
                   },
                   onSuccess: () => {
-                    router.push("/");
+                    if (onSuccess) {
+                      onSuccess();
+                    } else {
+                      router.push("/");
+                    }
                     router.refresh();
                   },
                   onError: (ctx) => {
@@ -129,7 +134,7 @@ export default function SignIn() {
                 await signIn.social(
                   {
                     provider: "google",
-                    callbackURL: "/",
+                    callbackURL: pathname || "/",
                   },
                   {
                     onRequest: () => {

@@ -27,6 +27,7 @@ export default function Navbar() {
   const { data: session, isPending } = authClient.useSession();
   const loggedIn = !!session?.user;
   const [signIn, setSignIn] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   useEffect(() => {
     if (session) {
       console.log("we have session:", session);
@@ -85,29 +86,31 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button>Log In</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px] px-10">
-                <div className="flex  items-center mb-4">
-                  <span className="text-sm text-muted-foreground">
-                    {signIn
-                      ? "Don't have an account?"
-                      : "Already have an account?"}
-                  </span>
-                  <Button
-                    variant="link"
-                    className="text-sm"
-                    onClick={() => setSignIn(!signIn)}
-                  >
-                    {signIn ? "Sign Up here" : "Sign In here"}
-                  </Button>
-                </div>
-                {signIn ? <SignIn /> : <SignUp />}
-              </DialogContent>
-            </form>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>Log In</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px] px-10">
+              <div className="flex  items-center mb-4">
+                <span className="text-sm text-muted-foreground">
+                  {signIn
+                    ? "Don't have an account?"
+                    : "Already have an account?"}
+                </span>
+                <Button
+                  variant="link"
+                  className="text-sm"
+                  onClick={() => setSignIn(!signIn)}
+                >
+                  {signIn ? "Sign Up here" : "Sign In here"}
+                </Button>
+              </div>
+              {signIn ? (
+                <SignIn onSuccess={() => setIsDialogOpen(false)} />
+              ) : (
+                <SignUp onSuccess={() => setIsDialogOpen(false)} />
+              )}
+            </DialogContent>
           </Dialog>
         )}
         <ModeToggle />
