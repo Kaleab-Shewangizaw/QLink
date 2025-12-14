@@ -20,8 +20,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Answer, IQuestion } from "@/lib/models/qModels";
 import { ArrowLeft, TrashIcon } from "lucide-react";
 
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function QuestionPage() {
   const [open, setOpen] = useState(false);
@@ -29,6 +32,7 @@ export default function QuestionPage() {
   const [data, setData] = useState<IQuestion | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [newAnswer, setNewAnswer] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const router = useRouter();
   const params = useParams();
   const questionId = params.id as string;
@@ -81,6 +85,7 @@ export default function QuestionPage() {
       upVotes: [],
       downVotes: [],
       isReply: false,
+      isAnonymous: false, // Temporarily disabled
       replies: 0,
       questionId,
       createdAt: new Date(),
@@ -156,6 +161,27 @@ export default function QuestionPage() {
                     e.key === "Enter" && !e.shiftKey && handleAddAnswer()
                   }
                 />
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="anonymous"
+                    checked={isAnonymous}
+                    onCheckedChange={(checked) => {
+                      setIsAnonymous(checked as boolean);
+                      if (checked) {
+                        toast.info(
+                          "Anonymous answering is coming soon! Your answer will be public for now."
+                        );
+                      }
+                    }}
+                  />
+                  <Label htmlFor="anonymous">Answer Anonymously</Label>
+                </div>
+                {isAnonymous && (
+                  <p className="text-xs text-muted-foreground">
+                    Anonymous answering is coming soon! Your answer will be
+                    public for now.
+                  </p>
+                )}
               </div>
               <DialogFooter>
                 <DialogClose asChild>

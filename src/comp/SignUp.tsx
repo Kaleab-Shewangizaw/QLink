@@ -18,6 +18,7 @@ import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
+import { compressImage } from "@/lib/utils";
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState("");
@@ -30,15 +31,16 @@ export default function SignUp() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImage(file);
+        setImagePreview(compressed);
+      } catch (error) {
+        console.error("Error compressing image:", error);
+      }
     }
   };
 
@@ -155,7 +157,7 @@ export default function SignUp() {
                 email,
                 password,
                 name: `${firstName} ${lastName}`,
-                image: image ? await convertImageToBase64(image) : "",
+                image: image ? await compressImage(image) : "",
                 callbackURL: "/",
                 fetchOptions: {
                   onResponse: () => {
@@ -191,13 +193,4 @@ export default function SignUp() {
       </CardFooter>
     </Card>
   );
-}
-
-async function convertImageToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 }

@@ -26,21 +26,20 @@ export async function PUT(
 
     const body = await req.json();
 
+    const link = await Link.findById(id);
+
+    if (!link) {
+      return NextResponse.json(
+        { success: false, message: "Link not found" },
+        { status: 404 }
+      );
+    }
+
     if (body.question) {
       body.question.respondent = session.user.id;
 
-      const link = await Link.findByIdAndUpdate(
-        id,
-        { $push: { questions: body.question } },
-        { new: true }
-      );
-
-      if (!link) {
-        return NextResponse.json(
-          { success: false, message: "Link not found" },
-          { status: 404 }
-        );
-      }
+      link.questions.push(body.question);
+      await link.save();
 
       return NextResponse.json(
         { success: true, message: "Question added successfully", link },
@@ -50,21 +49,27 @@ export async function PUT(
 
     const { name, isOpen } = body;
 
-    const link = await Link.findByIdAndUpdate(
-      id,
-      { name, isOpen },
-      { new: true }
-    );
+    if (name !== undefined || isOpen !== undefined) {
+      if (link.owner.id !== session.user.id) {
+        return NextResponse.json(
+          { message: "Only the owner can update link details" },
+          { status: 403 }
+        );
+      }
 
-    if (!link) {
+      if (name) link.name = name;
+      if (isOpen !== undefined) link.isOpen = isOpen;
+
+      await link.save();
+
       return NextResponse.json(
-        { success: false, message: "Link not found" },
-        { status: 404 }
+        { success: true, message: "Link updated successfully", link },
+        { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: true, message: "Link updated successfully", link },
+      { success: true, message: "No changes made", link },
       { status: 200 }
     );
   } catch (error) {

@@ -22,19 +22,41 @@ export async function PUT(
 
     const body = await req.json();
 
+    const question = await Question.findById(id);
+
+    if (!question) {
+      return NextResponse.json(
+        { success: false, message: "Question not found" },
+        { status: 404 }
+      );
+    }
+
     if (body.deleteAnswerId) {
-      const question = await Question.findByIdAndUpdate(
-        id,
-        { $pull: { answers: { _id: body.deleteAnswerId } } },
-        { new: true }
+      const answer = question.answers.find(
+        (a: any) => a._id.toString() === body.deleteAnswerId
       );
 
-      if (!question) {
+      if (!answer) {
         return NextResponse.json(
-          { success: false, message: "Question not found" },
+          { success: false, message: "Answer not found" },
           { status: 404 }
         );
       }
+
+      const isAsker = question.asker.id === session.user.id;
+      const isRespondent = answer.respondent?.id === session.user.id;
+
+      if (!isAsker && !isRespondent) {
+        return NextResponse.json(
+          { message: "Unauthorized to delete this answer" },
+          { status: 403 }
+        );
+      }
+
+      question.answers = question.answers.filter(
+        (a: any) => a._id.toString() !== body.deleteAnswerId
+      );
+      await question.save();
 
       return NextResponse.json(
         { success: true, message: "Answer deleted successfully", question },
@@ -50,19 +72,12 @@ export async function PUT(
         email: session.user.email || "",
         image: session.user.image || "",
       };
+      // Ensure isAnonymous is preserved from the request body
+      // It should already be in newAnswer if passed from frontend, but let's be explicit if needed.
+      // The frontend sends the whole answer object in the array, so newAnswer has it.
 
-      const question = await Question.findByIdAndUpdate(
-        id,
-        { $push: { answers: newAnswer } },
-        { new: true }
-      );
-
-      if (!question) {
-        return NextResponse.json(
-          { success: false, message: "Question not found" },
-          { status: 404 }
-        );
-      }
+      question.answers.push(newAnswer);
+      await question.save();
 
       return NextResponse.json(
         { success: true, message: "Answer added successfully", question },
@@ -72,18 +87,29 @@ export async function PUT(
 
     const { title, description, isAnonymous, upVotes, downVotes, views } = body;
 
-    const question = await Question.findByIdAndUpdate(
-      id,
-      { title, description, isAnonymous, upVotes, downVotes, views },
-      { new: true }
-    );
-
-    if (!question) {
-      return NextResponse.json(
-        { success: false, message: "Question not found" },
-        { status: 404 }
-      );
+    // Check if sensitive fields are being updated
+    if (
+      title !== undefined ||
+      description !== undefined ||
+      isAnonymous !== undefined
+    ) {
+      if (question.asker.id !== session.user.id) {
+        return NextResponse.json(
+          { message: "Only the asker can update question details" },
+          { status: 403 }
+        );
+      }
+      if (title) question.title = title;
+      if (description) question.description = description;
+      if (isAnonymous !== undefined) question.isAnonymous = isAnonymous;
     }
+
+    // Allow votes and views updates by authenticated users
+    if (upVotes) question.upVotes = upVotes;
+    if (downVotes) question.downVotes = downVotes;
+    if (views) question.views = views;
+
+    await question.save();
 
     return NextResponse.json(
       { success: true, message: "Question updated successfully", question },

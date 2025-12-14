@@ -70,6 +70,9 @@ export default function Navbar() {
               <DropdownMenuItem onClick={() => router.push("/my-questions")}>
                 <BiQuestionMark /> My Questions
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/my-answers")}>
+                <BiQuestionMark /> My Answers
+              </DropdownMenuItem>
 
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push("/settings")}>

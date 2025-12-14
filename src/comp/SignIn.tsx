@@ -14,16 +14,18 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { signIn } from "@/app/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
 
   return (
     <Card className="max-w-md">
@@ -86,6 +88,7 @@ export default function SignIn() {
                 {
                   email,
                   password,
+                  rememberMe,
                 },
                 {
                   onRequest: () => {
@@ -93,6 +96,13 @@ export default function SignIn() {
                   },
                   onResponse: () => {
                     setLoading(false);
+                  },
+                  onSuccess: () => {
+                    router.push("/");
+                    router.refresh();
+                  },
+                  onError: (ctx) => {
+                    toast.error(ctx.error.message);
                   },
                 }
               );
@@ -127,6 +137,9 @@ export default function SignIn() {
                     },
                     onResponse: () => {
                       setLoading(false);
+                    },
+                    onError: (ctx) => {
+                      toast.error(ctx.error.message);
                     },
                   }
                 );

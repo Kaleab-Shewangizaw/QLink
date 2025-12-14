@@ -10,6 +10,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
+import { compressImage } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function NewQuestion() {
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -21,34 +23,22 @@ export default function NewQuestion() {
 
   const { data: session } = authClient.useSession();
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files);
       setImages((prev) => [...prev, ...newFiles]);
-      newFiles.forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreviews((prev) => [...prev, reader.result as string]);
-        };
-        reader.readAsDataURL(file);
-      });
+
+      for (const file of newFiles) {
+        try {
+          const compressed = await compressImage(file);
+          setImagePreviews((prev) => [...prev, compressed]);
+        } catch (error) {
+          console.error("Error compressing image:", error);
+        }
+      }
     }
   };
-
-  async function convertImagesToBase64(files: File[]): Promise<string[]> {
-    return Promise.all(
-      files.map(
-        (file) =>
-          new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          })
-      )
-    );
-  }
 
   const router = useRouter();
 
@@ -69,7 +59,23 @@ export default function NewQuestion() {
     }
     setLoading(true);
     try {
-      const imagesBase64 = await convertImagesToBase64(images.slice(0, 4));
+      // Use the already compressed previews instead of re-compressing the original files
+      // Note: In a real app, you might want to keep the original files separate from previews
+      // but here we are using the previews as the data to send since they are base64 strings.
+      // However, the state `images` still holds File objects, and `imagePreviews` holds base64 strings.
+      // Since we already compressed them for preview, we can just use `imagePreviews`.
+      // But wait, `handleImageChange` appends to `imagePreviews`.
+      // Let's make sure we are sending the correct data.
+
+      // Actually, let's just re-compress the files in `images` state to be safe and consistent,
+      // or better yet, just use the `imagePreviews` if they are 1:1 mapped.
+      // The `handleRemoveImage` keeps them in sync.
+
+      // Let's use the `compressImage` utility on the `images` state to be sure.
+      const imagesBase64 = await Promise.all(
+        images.slice(0, 4).map((file) => compressImage(file))
+      );
+
       const res = await fetch("/api/question/add-question", {
         method: "POST",
         headers: {
@@ -78,7 +84,7 @@ export default function NewQuestion() {
         body: JSON.stringify({
           title,
           description,
-          isAnonymous,
+          isAnonymous: false, // Temporarily disabled
           images: imagesBase64,
         }),
       });
@@ -203,7 +209,14 @@ export default function NewQuestion() {
               <Checkbox
                 id="anonymous"
                 checked={isAnonymous}
-                onCheckedChange={(checked) => setIsAnonymous(checked === true)}
+                onCheckedChange={(checked) => {
+                  setIsAnonymous(checked === true);
+                  if (checked) {
+                    toast.info(
+                      "Anonymous asking is coming soon! Your question will be public for now."
+                    );
+                  }
+                }}
               />
               <Label htmlFor="anonymous">Ask Anonymously </Label>
               {/* have this text right below the check box using <p> */}
@@ -230,7 +243,7 @@ export default function NewQuestion() {
           </div>
           <p className="text-gray-400 font-normal w-full text-left mt-4 text-sm">
             {isAnonymous &&
-              "Your question is not anonymous. It will be implemented soon. Stay tuned!"}
+              "Anonymous asking is coming soon! Your question will be public for now."}
           </p>
         </form>
       </div>

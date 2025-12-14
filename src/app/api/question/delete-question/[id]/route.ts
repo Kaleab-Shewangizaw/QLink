@@ -20,11 +20,17 @@ export async function DELETE(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const question = await Question.findOneAndDelete({ _id: id });
+    const question = await Question.findOneAndDelete({
+      _id: id,
+      "asker.id": session.user.id,
+    });
 
     if (!question) {
       return NextResponse.json(
-        { success: false, message: "Question not found" },
+        {
+          success: false,
+          message: "Question not found or you are not authorized to delete it",
+        },
         { status: 404 }
       );
     }

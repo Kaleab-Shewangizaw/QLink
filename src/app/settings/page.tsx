@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
 import { Label } from "@/components/ui/label";
+import { compressImage } from "@/lib/utils";
 
 export default function Settingspage() {
   const { data: session } = authClient.useSession();
@@ -96,14 +97,15 @@ export default function Settingspage() {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setImage(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
+                      try {
+                        const compressed = await compressImage(file);
+                        setImage(compressed);
+                      } catch (error) {
+                        console.error("Error compressing image:", error);
+                      }
                     }
                   }}
                 />
