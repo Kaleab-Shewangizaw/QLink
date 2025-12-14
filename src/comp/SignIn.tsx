@@ -134,7 +134,7 @@ export default function SignIn({ onSuccess }: { onSuccess?: () => void }) {
                 await signIn.social(
                   {
                     provider: "google",
-                    callbackURL: pathname || "/",
+                    callbackURL: window.location.href,
                   },
                   {
                     onRequest: () => {

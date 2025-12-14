@@ -159,7 +159,7 @@ export default function SignUp({ onSuccess }: { onSuccess?: () => void }) {
                 password,
                 name: `${firstName} ${lastName}`,
                 image: image ? await compressImage(image) : "",
-                callbackURL: pathname || "/",
+                callbackURL: window.location.href,
                 fetchOptions: {
                   onResponse: () => {
                     setLoading(false);
