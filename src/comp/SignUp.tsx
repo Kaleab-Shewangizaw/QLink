@@ -16,7 +16,7 @@ import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 
 import { toast } from "sonner";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
 import { compressImage } from "@/lib/utils";
 
@@ -29,7 +29,6 @@ export default function SignUp({ onSuccess }: { onSuccess?: () => void }) {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
-  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
