@@ -33,6 +33,7 @@ export default function QuestionPage() {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [newAnswer, setNewAnswer] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams();
   const questionId = params.id as string;
@@ -80,6 +81,8 @@ export default function QuestionPage() {
       return;
     }
 
+    setLoading(true);
+
     const newAnswerObj: Answer = {
       text: newAnswer,
       upVotes: [],
@@ -111,6 +114,8 @@ export default function QuestionPage() {
       }
     } catch (error) {
       console.error("Error adding answer:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -187,8 +192,11 @@ export default function QuestionPage() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button disabled={!newAnswer.trim()} onClick={handleAddAnswer}>
-                  Answer
+                <Button
+                  disabled={!newAnswer.trim() || loading}
+                  onClick={handleAddAnswer}
+                >
+                  {loading ? "Submitting..." : "Answer"}
                 </Button>
               </DialogFooter>
             </DialogContent>
