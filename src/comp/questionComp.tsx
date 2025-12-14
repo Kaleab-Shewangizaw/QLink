@@ -41,6 +41,32 @@ export function Top({
   const [user, setUser] = useState<User | null>(null);
   const { data: session } = authClient.useSession();
   const [loading, setLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+
+  const handleDeleteQuestion = async () => {
+    if (!question) return;
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this question?"
+    );
+    if (!confirmDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/question/delete-question/${question._id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        console.error("Failed to delete question");
+      }
+    } catch (error) {
+      console.error("Error deleting question:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const asker: string | undefined =
     question?.asker.id ||
@@ -100,9 +126,25 @@ export function Top({
           </>
         </p>
       </div>
-      <div className="text-sm text-gray-500">
-        {answer?.createdAt?.toString?.().slice(0, 10) ||
-          question?.createdAt?.toString?.().slice(0, 10)}
+      <div className="flex items-center gap-2">
+        <div className="text-sm text-gray-500">
+          {answer?.createdAt?.toString?.().slice(0, 10) ||
+            question?.createdAt?.toString?.().slice(0, 10)}
+        </div>
+        {question && session?.user?.id === asker && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-100/10"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteQuestion();
+            }}
+            disabled={isDeleting}
+          >
+            <Trash size={14} />
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -2,11 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { ILink } from "@/lib/models/LinkModel";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Trash } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function LinkComp({ link }: { link: ILink }) {
+export default function LinkComp({
+  link,
+  onDelete,
+}: {
+  link: ILink;
+  onDelete?: () => void;
+}) {
   const [isClosed, setIsClosed] = useState(link.isOpen);
   const [copied, setCopied] = useState(false);
 
@@ -67,12 +73,22 @@ export default function LinkComp({ link }: { link: ILink }) {
           <Button
             size="sm"
             variant="outline"
-            className={`font-normal 
+            className={`font-normal mr-2
             }`}
             onClick={handleClose}
           >
             {isClosed ? "Close" : "Open"}
           </Button>
+          {onDelete && (
+            <Button
+              size="sm"
+              variant="destructive"
+              className="px-2"
+              onClick={onDelete}
+            >
+              <Trash size={16} />
+            </Button>
+          )}
         </div>
       </div>
     </div>

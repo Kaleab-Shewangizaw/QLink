@@ -37,7 +37,7 @@ export default function MyQuestionsPage() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul>
+        <ul className="flex flex-col gap-4">
           {questions.map((question: IQuestion) => (
             <QuestionComp key={question._id} question={question} />
           ))}

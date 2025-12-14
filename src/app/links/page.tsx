@@ -10,6 +10,23 @@ export default function MyLinksPage() {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this link?")) return;
+    try {
+      const res = await fetch(`/api/link/delete-link/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setLinks((prev) => prev.filter((link: ILink) => link._id !== id));
+      } else {
+        console.error("Failed to delete link");
+      }
+    } catch (error) {
+      console.error("Error deleting link:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchLinks = async () => {
       setLoading(true);
@@ -39,7 +56,11 @@ export default function MyLinksPage() {
       ) : (
         <ul>
           {links.map((link: ILink) => (
-            <LinkComp key={link._id} link={link} />
+            <LinkComp
+              key={link._id}
+              link={link}
+              onDelete={() => handleDelete(link._id)}
+            />
           ))}
         </ul>
       )}

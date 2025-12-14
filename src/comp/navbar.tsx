@@ -20,6 +20,7 @@ import { authClient } from "@/app/lib/auth-client";
 import { Link, Loader2, LogOut, Settings } from "lucide-react";
 import { BiQuestionMark } from "react-icons/bi";
 import { useRouter } from "next/navigation";
+import { GiIdea } from "react-icons/gi";
 
 export default function Navbar() {
   const router = useRouter();
@@ -71,7 +72,7 @@ export default function Navbar() {
                 <BiQuestionMark /> My Questions
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/my-answers")}>
-                <BiQuestionMark /> My Answers
+                <GiIdea /> My Answers
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
