@@ -18,7 +18,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { signIn } from "@/app/lib/auth-client";
 import { toast } from "sonner";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function SignIn({ onSuccess }: { onSuccess?: () => void }) {
   const [email, setEmail] = useState("");
@@ -26,7 +26,6 @@ export default function SignIn({ onSuccess }: { onSuccess?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
 
   return (
     <Card className="max-w-md border-none shadow-none">
